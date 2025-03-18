@@ -4,4 +4,4 @@
 /**/build/*
 /**/lib/*
 /**/.env
-
+node_modules/

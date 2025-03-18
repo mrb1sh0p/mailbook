@@ -1,0 +1,10 @@
+{
+  "name": "mass-email-app",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "concurrently \"cd backend && node --experimental-modules --es-module-specifier-resolution=node index.js\" \"cd frontend && npm start\""
+  },
+  "dependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
