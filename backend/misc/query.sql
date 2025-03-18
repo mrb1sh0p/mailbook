@@ -1,0 +1,9 @@
+CREATE TABLE
+  smtp_config (
+    id SERIAL PRIMARY KEY,
+    host VARCHAR(255) NOT NULL,
+    port INTEGER NOT NULL,
+    secure BOOLEAN NOT NULL,
+    user VARCHAR(255) NOT NULL,
+    pass VARCHAR(255) NOT NULL
+  );

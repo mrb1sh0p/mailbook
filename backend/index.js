@@ -1,10 +1,13 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import 'dotenv/config';
+
+import emailRoutes from './routes/emailRoutes.js';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use('/api/email', emailRoutes);
 
 app.get('/', (req, res) => {
   res.send('Email API Running');
