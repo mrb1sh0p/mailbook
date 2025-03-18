@@ -57,58 +57,52 @@ router.post('/upload', upload.single('file'), (req, res) => {
 router.post('/send', async (req, res) => {
   const { emails, html, smtpConfig } = req.body;
   
-  // Validação básica
-  if (!emails || !html || !smtpConfig) {
-    return res.status(400).json({ error: 'Dados incompletos' });
-  }
-
-  console.log(emails)
+  console.log('Iniciando processo de envio...');
+  console.log('Configuração SMTP:', JSON.stringify(smtpConfig, null, 2));
 
   const transporter = nodemailer.createTransport({
     host: smtpConfig.host,
     port: smtpConfig.port,
-    requireTLS: true,
+    secure: smtpConfig.secure,
     auth: {
-      user: smtpConfig.username,
+      user: smtpConfig.user,
       pass: smtpConfig.pass
-    }
-  });
-
-  //verificando se o smtp é valido
-  transporter.verify(function(error, success) {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log('Server is ready to take our messages');
-    }
+    },
+    logger: true,
+    debug: true
   });
 
   try {
+    console.log('Verificando conexão SMTP...');
+    await transporter.verify();
+    console.log('Conexão SMTP verificada com sucesso!');
+
     const results = await Promise.all(
       emails.map(async (emailData) => {
+        console.log('Preparando e-mail para:', emailData.to);
         const mailOptions = {
           from: `"${smtpConfig.user}" <${smtpConfig.user}>`,
           to: emailData.to,
           subject: emailData.subject,
-          html: html,
+          html,
           attachments: []
         };
 
-        // Adicionar anexo se existir
         if (emailData.attachment) {
-          const filePath = path.join('uploads', emailData.attachment.filename);
+          console.log('Adicionando anexo:', emailData.attachment.originalname);
           mailOptions.attachments.push({
             filename: emailData.attachment.originalname,
-            path: filePath,
+            path: `uploads/${emailData.attachment.filename}`,
             contentType: 'application/pdf'
           });
         }
 
         const info = await transporter.sendMail(mailOptions);
+        console.log('E-mail enviado:', info.messageId);
         
-        // Limpar arquivo após envio
         if (emailData.attachment) {
-          fs.unlinkSync(path.join('uploads', emailData.attachment.filename));
+          fs.unlinkSync(`uploads/${emailData.attachment.filename}`);
+          console.log('Arquivo temporário removido');
         }
 
         return info;
@@ -124,7 +118,8 @@ router.post('/send', async (req, res) => {
     console.error('Erro no envio:', error);
     res.status(500).json({ 
       error: 'Erro ao enviar e-mails',
-      details: error.message 
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });

@@ -5,6 +5,7 @@
     "start": "concurrently \"cd backend && node --experimental-modules --es-module-specifier-resolution=node index.js\" \"cd frontend && npm start\""
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "concurrently": "^7.6.0"
   }
 }

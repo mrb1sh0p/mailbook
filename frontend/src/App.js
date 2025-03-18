@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { ChevronDownIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 function App() {
   const [smtpList, setSmtpList] = useState([]);
+  const [encryptionType, setEncryptionType] = useState('tls'); 
   const [selectedSmtpId, setSelectedSmtpId] = useState('');
   const [smtp, setSmtp] = useState({
     host: '',
@@ -21,12 +23,13 @@ function App() {
 
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
+  const [showSmtpConfig, setShowSmtpConfig] = useState(true);
 
   // Carregar configurações SMTP
   useEffect(() => {
     const loadConfigs = async () => {
       try {
-        const { data } = await axios.get('/api/v1/smtp/');
+        const { data } = await axios.get('/api/v1/smtp');
         setSmtpList(data);
       } catch (error) {
         showFeedback('error', 'Erro ao carregar configurações');
@@ -85,6 +88,14 @@ function App() {
     }));
   };
 
+  const removeRecipient = (indexToRemove) => {
+    if (emailData.recipients.length === 1) return;
+    setEmailData(prev => ({
+      ...prev,
+      recipients: prev.recipients.filter((_, index) => index !== indexToRemove)
+    }));
+  };
+
   // Envio de e-mails
   const sendEmails = async (e) => {
     e.preventDefault();
@@ -96,34 +107,48 @@ function App() {
         html: emailData.html,
         smtpConfig: smtp
       };
-
+  
       const { data } = await axios.post('/api/v1/send', payload);
-
-      console.log(data)
-
-      showFeedback('success', `${data.sentCount} e-mails enviados com sucesso!`);
+      
+      if (data.success) {
+        showFeedback('success', `${data.sentCount} e-mails enviados com sucesso!`);
+      } else {
+        showFeedback('error', 'Envio parcialmente bem-sucedido');
+      }
+      
       setEmailData({
         html: emailData.html,
         recipients: [{ to: '', subject: '', attachment: null }]
       });
     } catch (error) {
-      const message = error.response?.data?.error || error.message;
-      showFeedback('error', `Erro: ${message}`);
+      let message = 'Erro desconhecido';
+      
+      if (error.response) {
+        message = `${error.response.data.error}: ${error.response.data.details}`;
+      } else if (error.request) {
+        message = 'Sem resposta do servidor - verifique sua conexão';
+      } else {
+        message = error.message;
+      }
+      
+      showFeedback('error', message);
     } finally {
       setLoading(false);
     }
   };
 
   // Carregar configuração selecionada
-  const loadSelectedSmtp = async (id) => {
-    try {
-      const response = await axios.get(`/api/v1/smtp/${id}`);
-      setSmtp(response.data);
-      setSelectedSmtpId(id);
-    } catch (err) {
-     showFeedback('Erro ao carregar configuração SMTP');
-    }
-  };
+ const loadSelectedSmtp = async (id) => {
+  try {
+    const response = await axios.get(`/api/v1/smtp/${id}`);
+    const config = response.data;
+    setSmtp(config);
+    setEncryptionType(config.secure ? 'ssl' : 'tls');
+  } catch (err) {
+    showFeedback('error', 'Erro ao carregar configuração SMTP');
+  }
+};
+
   // Feedback visual
   const showFeedback = (type, message) => {
     setFeedback({ type, message });
@@ -144,103 +169,123 @@ function App() {
           </div>
         )}
 
-        {/* Seção SMTP */}
-        <form onSubmit={saveSmtpConfig} className="bg-white p-6 rounded-xl shadow-sm">
-          <div className="mb-4">
-            <label className="block mb-2 font-medium">Selecionar Configuração:</label>
-            <select 
-              className="border p-2 rounded w-full"
-              onChange={(e) => loadSelectedSmtp(e.target.value)}
-              value={selectedSmtpId}
-            >
-              <option value="">Nova Configuração</option>
-              {smtpList.map((config) => (
-                <option key={config.id} value={config.id}>
-                  {config.title} - {config.username.split('@')[0]}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <h2 className="text-2xl font-bold mb-6 text-gray-800">Configuração SMTP</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Host</label>
-              <input
-                name="host"
-                value={smtp.host}
-                onChange={handleSmtpChange}
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                placeholder="smtp.seuprovedor.com"
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Porta</label>
-              <input
-                type="number"
-                name="port"
-                value={smtp.port}
-                onChange={handleSmtpChange}
-                className="w-full p-2 border rounded-md"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Usuário</label>
-              <input
-                name="username"
-                value={smtp.username}
-
-                onChange={handleSmtpChange}
-                className="w-full p-2 border rounded-md"
-                placeholder="seu@email.com"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Senha</label>
-              <input
-                type="password"
-                name="pass"
-                value={smtp.pass}
-                onChange={handleSmtpChange}
-                className="w-full p-2 border rounded-md"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center mb-4">
-            <input
-              type="checkbox"
-              name="secure"
-              checked={smtp.secure}
-              onChange={handleSmtpChange}
-              className="mr-2"
-            />
-            <label className="text-sm text-gray-700">Conexão segura (SSL/TLS)</label>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
-            disabled={loading}
+        {/* Seção SMTP recolhível */}
+        <div className="bg-white p-6 rounded-xl shadow-sm">
+          <div 
+            className="flex items-center justify-between cursor-pointer"
+            onClick={() => setShowSmtpConfig(!showSmtpConfig)}
           >
-            {selectedSmtpId ? 'Atualizar Configuração' : 'Salvar Configuração'}
-          </button>
-        </form>
+            <h2 className="text-2xl font-bold text-gray-800">Configuração SMTP</h2>
+            {showSmtpConfig ? (
+              <ChevronUpIcon className="h-6 w-6 text-gray-600" />
+            ) : (
+              <ChevronDownIcon className="h-6 w-6 text-gray-600" />
+            )}
+          </div>
+
+          {showSmtpConfig && (
+            <form onSubmit={saveSmtpConfig} className="mt-6">
+              <div className="mb-4">
+                <label className="block mb-2 font-medium">Selecionar Configuração:</label>
+                <select 
+                  className="border p-2 rounded w-full"
+                  onChange={(e) => loadSelectedSmtp(e.target.value)}
+                  value={selectedSmtpId}
+                >
+                  <option value="">Nova Configuração</option>
+                  {smtpList.map((config) => (
+                    <option key={config.id} value={config.id}>
+                      {config.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Host</label>
+                  <input
+                    name="host"
+                    value={smtp.host}
+                    onChange={handleSmtpChange}
+                    className="w-full p-2 border rounded-md"
+                    placeholder="smtp.seuprovedor.com"
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Porta</label>
+                  <input
+                    type="number"
+                    name="port"
+                    value={smtp.port}
+                    onChange={handleSmtpChange}
+                    className="w-full p-2 border rounded-md"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Usuário</label>
+                  <input
+                    name="username"
+                    onChange={handleSmtpChange}
+                    className="w-full p-2 border rounded-md"
+                    placeholder="seu@email.com"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Senha</label>
+                  <input
+                    type="password"
+                    name="pass"
+                    onChange={handleSmtpChange}
+                    className="w-full p-2 border rounded-md"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  name="secure"
+                  checked={smtp.secure}
+                  onChange={handleSmtpChange}
+                  className="mr-2"
+                />
+                <label className="text-sm text-gray-700">Conexão segura (SSL/TLS)</label>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+                disabled={loading}
+              >
+                {selectedSmtpId ? 'Atualizar Configuração' : 'Salvar Configuração'}
+              </button>
+            </form>
+          )}
+        </div>
 
         {/* Seção de Envio */}
         <form onSubmit={sendEmails} className="bg-white p-6 rounded-xl shadow-sm">
           <h2 className="text-2xl font-bold mb-6 text-gray-800">Enviar E-mails</h2>
           
           {emailData.recipients.map((recipient, index) => (
-            <div key={index} className="mb-6 border-b pb-6 last:border-b-0">
+            <div key={index} className="mb-6 border-b pb-6 last:border-b-0 relative group">
+              <button
+                type="button"
+                onClick={() => removeRecipient(index)}
+                className="absolute top-2 right-2 p-1 text-red-500 hover:text-red-700 transition-colors"
+                disabled={emailData.recipients.length === 1}
+              >
+                <XMarkIcon className="h-5 w-5" />
+              </button>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">Destinatário</label>
@@ -275,39 +320,54 @@ function App() {
                   className="w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                 />
                 {recipient.attachment && (
-                  <span className="text-sm text-gray-500 mt-1">
-                    Anexado: {recipient.attachment.originalname}
-                  </span>
+                  <div className="mt-2 text-sm text-gray-500 flex items-center">
+                    <span className="mr-2">Anexado:</span>
+                    <span className="font-medium">{recipient.attachment.originalname}</span>
+                    <span className="mx-2">•</span>
+                    <span>{(recipient.attachment.size / 1024).toFixed(1)} KB</span>
+                  </div>
                 )}
               </div>
             </div>
           ))}
 
-          <button
-            type="button"
-            onClick={addRecipient}
-            className="mb-6 bg-gray-100 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition-colors"
-          >
-            + Adicionar Destinatário
-          </button>
+          <div className="flex flex-col md:flex-row gap-4">
+            <button
+              type="button"
+              onClick={addRecipient}
+              className="bg-blue-100 text-blue-700 py-2 px-4 rounded-md hover:bg-blue-200 transition-colors"
+            >
+              + Adicionar Destinatário
+            </button>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">Conteúdo HTML</label>
+            <button
+              type="submit"
+              className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 flex-1"
+              disabled={loading}
+            >
+              {loading ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                  </svg>
+                  Enviando...
+                </span>
+              ) : (
+                `Enviar ${emailData.recipients.length} E-mail(s)`
+              )}
+            </button>
+          </div>
+
+          <div className="mt-8">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Editor HTML</label>
             <textarea
               value={emailData.html}
               onChange={(e) => setEmailData({ ...emailData, html: e.target.value })}
-              className="w-full h-96 p-3 border rounded-md font-mono text-sm focus:ring-2 focus:ring-blue-500"
+              className="w-full h-96 p-4 border rounded-md font-mono text-sm focus:ring-2 focus:ring-blue-500 resize-none"
               spellCheck="false"
             />
           </div>
-
-          <button
-            type="submit"
-            className="w-full mt-6 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50"
-            disabled={loading}
-          >
-            {loading ? 'Enviando...' : 'Enviar Todos os E-mails'}
-          </button>
         </form>
       </div>
     </div>
