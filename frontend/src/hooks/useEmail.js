@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import DOMPurify from 'dompurify';
 import axios from 'axios';
 
 export const useEmail = () => {
@@ -31,10 +32,20 @@ export const useEmail = () => {
 
   const sendEmails = async (smtpConfig) => {
     setLoading(true);
+    setError(null); // Resetar erros anteriores
+
     try {
+      if (!emailData.html?.trim()) {
+        throw new Error('O conteúdo do e-mail não pode estar vazio');
+      }
+      
       const payload = {
-        emails: emailData.recipients,
-        html: emailData.html,
+        emails: emailData.recipients.map(r => ({
+          to: r.to.trim(),
+          subject: r.subject.trim(),
+          attachment: r.attachment
+        })),
+        html: DOMPurify.sanitize(emailData.html),
         smtpConfig
       };
       
