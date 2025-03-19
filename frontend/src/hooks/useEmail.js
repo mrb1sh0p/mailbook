@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const useEmail = () => {
   const [emailData, setEmailData] = useState({
-    html: '<h1 class="text-2xl font-bold">Conteúdo do E-mail</h1>',
+    html: '<p style="margin: 0cm; font-size: 11pt; font-family: calibri, sans-serif;" class="MsoNormal"><span style="background-color: rgb(255, 255, 255);"><strong>&nbsp;João Gustavo Soares Bispo</strong>&nbsp;| Assessor Técnico</span></p><p style="margin: 0cm; font-size: 11pt; font-family: calibri, sans-serif;" class="MsoNormal"><span style="background-color: rgb(255, 255, 255);"><span style="font-size: 12pt;">&nbsp;Instituto Estadual de Proteção ao Consumidor - PROCON</span>&nbsp;– PROCON/ES&nbsp;</span></p><p style="margin: 0cm; font-family: arial, helvetica, sans-serif;  class="MsoNormal"><span style="background-color: rgb(255, 255, 255);"><span style="font-family: calibri, sans-serif; font-size: 11pt;">GTI | NUINF – Núcleo de&nbsp;</span><span style="font-size: 14.6667px;">Informática</p>',
     recipients: [{ to: '', subject: '', attachment: null }]
   });
   const [loading, setLoading] = useState(false);
