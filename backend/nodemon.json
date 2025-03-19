@@ -1,0 +1,6 @@
+{
+  "watch": ["."],
+  "ignore": ["frontend/**", "uploads/**"],
+  "ext": "js,json",
+  "exec": "node --experimental-modules --es-module-specifier-resolution=node index.js"
+}

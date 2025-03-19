@@ -4,23 +4,22 @@ import { ChevronDownIcon, ChevronUpIcon, XMarkIcon } from '@heroicons/react/24/o
 
 function App() {
   const [smtpList, setSmtpList] = useState([]);
-  const [encryptionType, setEncryptionType] = useState('tls'); 
   const [selectedSmtpId, setSelectedSmtpId] = useState('');
   const [smtp, setSmtp] = useState({
+    title: '',
     host: '',
     port: 587,
-    secure: false,
+    secure: 'TLS',
     username: '',
     pass: ''
   });
-  
+  const [encryptionType, setEncryptionType] = useState('tls');
   const [emailData, setEmailData] = useState({
     html: '<h1 class="text-2xl font-bold">Conteúdo do E-mail</h1>',
     recipients: [
       { to: '', subject: '', attachment: null }
     ]
   });
-
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const [showSmtpConfig, setShowSmtpConfig] = useState(true);
@@ -30,7 +29,9 @@ function App() {
     const loadConfigs = async () => {
       try {
         const { data } = await axios.get('/api/v1/smtp');
-        setSmtpList(data);
+        if(data){
+          setSmtpList(data);
+        }
       } catch (error) {
         showFeedback('error', 'Erro ao carregar configurações');
       }
@@ -40,10 +41,18 @@ function App() {
 
   // Manipuladores de SMTP
   const handleSmtpChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
+    setSmtp(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleEncryptionChange = (e) => {
+    const type = e.target.value;
+    setEncryptionType(type);
+    const newPort = type === 'ssl' ? 465 : 587;
     setSmtp(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      secure: type === 'ssl' ? 'SSL' : 'TLS',
+      port: newPort
     }));
   };
 
@@ -51,10 +60,24 @@ function App() {
     e.preventDefault();
     try {
       const { data } = await axios.post('/api/v1/smtp', smtp);
+      console.log(data);
       setSmtpList([...smtpList, data]);
       showFeedback('success', 'Configuração salva com sucesso!');
     } catch (error) {
+      console.log(error);
       showFeedback('error', 'Erro ao salvar configuração');
+    }
+  };
+
+  // Carregar configuração selecionada
+  const loadSelectedSmtp = async (id) => {
+    try {
+      const { data } = await axios.get(`/api/v1/smtp/${id}`);
+      setSmtp(data);
+      setEncryptionType(data.secure === 'ssl' ? 'ssl' : 'tls');
+      setSelectedSmtpId(id);
+    } catch (error) {
+      showFeedback('error', 'Erro ao carregar configuração SMTP');
     }
   };
 
@@ -107,22 +130,21 @@ function App() {
         html: emailData.html,
         smtpConfig: smtp
       };
-  
+
       const { data } = await axios.post('/api/v1/send', payload);
       
       if (data.success) {
         showFeedback('success', `${data.sentCount} e-mails enviados com sucesso!`);
       } else {
-        showFeedback('error', 'Envio parcialmente bem-sucedido');
+        showFeedback('warning', 'Alguns e-mails não foram enviados');
       }
-      
+
       setEmailData({
         html: emailData.html,
         recipients: [{ to: '', subject: '', attachment: null }]
       });
     } catch (error) {
       let message = 'Erro desconhecido';
-      
       if (error.response) {
         message = `${error.response.data.error}: ${error.response.data.details}`;
       } else if (error.request) {
@@ -130,27 +152,14 @@ function App() {
       } else {
         message = error.message;
       }
-      
       showFeedback('error', message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Carregar configuração selecionada
- const loadSelectedSmtp = async (id) => {
-  try {
-    const response = await axios.get(`/api/v1/smtp/${id}`);
-    const config = response.data;
-    setSmtp(config);
-    setEncryptionType(config.secure ? 'ssl' : 'tls');
-  } catch (err) {
-    showFeedback('error', 'Erro ao carregar configuração SMTP');
-  }
-};
-
   // Feedback visual
-  const showFeedback = (type, message) => {
+  const showFeedback = (type, message, error) => {
     setFeedback({ type, message });
     setTimeout(() => setFeedback({ type: '', message: '' }), 5000);
   };
@@ -163,6 +172,8 @@ function App() {
           <div className={`p-4 rounded-lg ${
             feedback.type === 'success' 
               ? 'bg-green-100 text-green-800' 
+              : feedback.type === 'warning'
+              ? 'bg-yellow-100 text-yellow-800'
               : 'bg-red-100 text-red-800'
           }`}>
             {feedback.message}
@@ -202,8 +213,19 @@ function App() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Titulo</label>
+                  <input
+                    name="title"
+                    value={smtp.title}
+                    onChange={handleSmtpChange}
+                    className="w-full p-2 border rounded-md"
+                    placeholder="Título da configuração"
+                    required
+                  />
+                </div>
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Host</label>
+                  <label className="block text-sm font-medium text-gray-700">Host SMTP</label>
                   <input
                     name="host"
                     value={smtp.host}
@@ -213,7 +235,19 @@ function App() {
                     required
                   />
                 </div>
-                
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Tipo de Criptografia</label>
+                  <select
+                    value={encryptionType}
+                    onChange={handleEncryptionChange}
+                    className="w-full p-2 border rounded-md"
+                  >
+                    <option value="tls">TLS (Recomendado)</option>
+                    <option value="ssl">SSL</option>
+                  </select>
+                </div>
+
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">Porta</label>
                   <input
@@ -230,6 +264,7 @@ function App() {
                   <label className="block text-sm font-medium text-gray-700">Usuário</label>
                   <input
                     name="username"
+                    value={smtp.username}
                     onChange={handleSmtpChange}
                     className="w-full p-2 border rounded-md"
                     placeholder="seu@email.com"
@@ -242,6 +277,7 @@ function App() {
                   <input
                     type="password"
                     name="pass"
+                    value={smtp.pass}
                     onChange={handleSmtpChange}
                     className="w-full p-2 border rounded-md"
                     required
@@ -249,20 +285,17 @@ function App() {
                 </div>
               </div>
 
-              <div className="flex items-center mb-4">
-                <input
-                  type="checkbox"
-                  name="secure"
-                  checked={smtp.secure}
-                  onChange={handleSmtpChange}
-                  className="mr-2"
-                />
-                <label className="text-sm text-gray-700">Conexão segura (SSL/TLS)</label>
+              <div className="text-sm text-gray-500 mt-2">
+                {encryptionType === 'ssl' ? (
+                  <span>✔️ Conexão segura via SSL na porta {smtp.port}</span>
+                ) : (
+                  <span>✔️ Conexão segura via TLS (STARTTLS) na porta {smtp.port}</span>
+                )}
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+                className="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
                 disabled={loading}
               >
                 {selectedSmtpId ? 'Atualizar Configuração' : 'Salvar Configuração'}
@@ -321,17 +354,15 @@ function App() {
                 />
                 {recipient.attachment && (
                   <div className="mt-2 text-sm text-gray-500 flex items-center">
-                    <span className="mr-2">Anexado:</span>
-                    <span className="font-medium">{recipient.attachment.originalname}</span>
-                    <span className="mx-2">•</span>
-                    <span>{(recipient.attachment.size / 1024).toFixed(1)} KB</span>
+                    <span className="mr-2">📎 {recipient.attachment.originalname}</span>
+                    <span className="text-xs">({Math.round(recipient.attachment.size / 1024)} KB)</span>
                   </div>
                 )}
               </div>
             </div>
           ))}
 
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
             <button
               type="button"
               onClick={addRecipient}
@@ -359,13 +390,14 @@ function App() {
             </button>
           </div>
 
-          <div className="mt-8">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Editor HTML</label>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">Conteúdo HTML</label>
             <textarea
               value={emailData.html}
               onChange={(e) => setEmailData({ ...emailData, html: e.target.value })}
               className="w-full h-96 p-4 border rounded-md font-mono text-sm focus:ring-2 focus:ring-blue-500 resize-none"
               spellCheck="false"
+              placeholder="Digite seu conteúdo HTML aqui..."
             />
           </div>
         </form>

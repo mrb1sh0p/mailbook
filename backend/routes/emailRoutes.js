@@ -3,24 +3,27 @@ import nodemailer from 'nodemailer';
 import { pool } from '../db.js';
 import { upload } from '../middleware/upload.js';
 import fs from 'fs';
-import path from 'path';
 
 const router = express.Router();
 
 // CRUD SMTP
 router.post('/smtp', async (req, res) => {
-  const { host, port, secure, user, pass } = req.body;
+  const { title, host, port, secure, username, pass } = req.body;
   try {
     const result = await pool.query(
       `INSERT INTO smtp_config 
       (title, host, port, secure, username, pass) 
-      VALUES ($1, $2, $3, $4, $5) 
+      VALUES ($1, $2, $3, $4, $5, $6) 
       RETURNING *`,
-      [title, host, port, secure, user, pass]
+      [title, host, port, secure, username, pass]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Erro no banco de dados:', error);
+    res.status(500).json({ 
+      error: 'Erro ao salvar configuração',
+      details: error.message
+    });
   }
 });
 
@@ -63,13 +66,12 @@ router.post('/send', async (req, res) => {
   const transporter = nodemailer.createTransport({
     host: smtpConfig.host,
     port: smtpConfig.port,
-    secure: smtpConfig.secure,
+    secure: smtpConfig.sslMethod === "SSL", 
+    requireTLS: smtpConfig.sslMethod === "TLS",
     auth: {
-      user: smtpConfig.user,
+      user: smtpConfig.username,
       pass: smtpConfig.pass
-    },
-    logger: true,
-    debug: true
+    }
   });
 
   try {
@@ -80,6 +82,12 @@ router.post('/send', async (req, res) => {
     const results = await Promise.all(
       emails.map(async (emailData) => {
         console.log('Preparando e-mail para:', emailData.to);
+        console.log('Assunto:', emailData.subject);
+
+        if (!emailData.to || !emailData.subject) {
+          return { error: 'E-mail ou assunto não informados' };
+        }
+
         const mailOptions = {
           from: `"${smtpConfig.user}" <${smtpConfig.user}>`,
           to: emailData.to,
@@ -93,12 +101,15 @@ router.post('/send', async (req, res) => {
           mailOptions.attachments.push({
             filename: emailData.attachment.originalname,
             path: `uploads/${emailData.attachment.filename}`,
-            contentType: 'application/pdf'
           });
         }
 
         const info = await transporter.sendMail(mailOptions);
-        console.log('E-mail enviado:', info.messageId);
+        console.log('E-mail enviado:', {
+          messageId: info.messageId,
+          to: info.envelope.to,
+          subject: emailData.subject
+        });
         
         if (emailData.attachment) {
           fs.unlinkSync(`uploads/${emailData.attachment.filename}`);
