@@ -61,13 +61,12 @@ router.post('/send', async (req, res) => {
   const { emails, html, smtpConfig } = req.body;
   
   console.log('Iniciando processo de envio...');
-  console.log('Configuração SMTP:', JSON.stringify(smtpConfig, null, 2));
 
   const transporter = nodemailer.createTransport({
     host: smtpConfig.host,
     port: smtpConfig.port,
-    secure: smtpConfig.sslMethod === "SSL", 
-    requireTLS: smtpConfig.sslMethod === "TLS",
+    secure: smtpConfig.secure === "SSL", 
+    requireTLS: smtpConfig.secure === "TLS",
     auth: {
       user: smtpConfig.username,
       pass: smtpConfig.pass
@@ -82,18 +81,25 @@ router.post('/send', async (req, res) => {
     const results = await Promise.all(
       emails.map(async (emailData) => {
         console.log('Preparando e-mail para:', emailData.to);
-        console.log('Assunto:', emailData.subject);
 
         if (!emailData.to || !emailData.subject) {
           return { error: 'E-mail ou assunto não informados' };
         }
 
         const mailOptions = {
-          from: `"${smtpConfig.user}" <${smtpConfig.user}>`,
+          from: `'${smtpConfig.username.split('@')[0]}' <${smtpConfig.username}>`,
           to: emailData.to,
           subject: emailData.subject,
           html,
-          attachments: []
+          headers:{
+            'X-Priority': '1',
+            'Reply-To': smtpConfig.username
+          },
+          attachments: [],
+          envelope: {
+            from: smtpConfig.username,
+            to: emailData.to
+          }
         };
 
         if (emailData.attachment) {
