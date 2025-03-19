@@ -31,6 +31,15 @@ CREATE TABLE
   );
 
 CREATE TABLE
+  email_model (
+    id uuid NOT NULL DEFAULT gen_random_uuid () CONSTRAINT pk_email_model PRIMARY KEY,
+    title TEXT NOT NULL,
+    body TEXT NOT NULL,
+    utc_created_on TIMESTAMP NOT NULL CONSTRAINT df_email_model_utc_created_on DEFAULT now (),
+    org_id uuid NOT NULL CONSTRAINT fk_email_model_org_id REFERENCES orgs (id)
+  );
+
+CREATE TABLE
   user_is_orgs (
     id uuid NOT NULL DEFAULT gen_random_uuid () CONSTRAINT pk_user_is_orgs PRIMARY KEY,
     user_id uuid NOT NULL,
