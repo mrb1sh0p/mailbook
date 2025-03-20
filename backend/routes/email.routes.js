@@ -2,19 +2,18 @@ import express from 'express';
 import {
   createSmtpConfig,
   getSmtpConfigs,
-  getSmtpConfigById
-} from '../controllers/smtpController.js';
-import { uploadFile } from '../controllers/uploadController.js';
-import { sendEmails } from '../controllers/emailController.js';
+  getSmtpConfigById,
+} from '../controllers/smtp.controller.js';
+import { uploadFile } from '../controllers/upload.controller.js';
+import { sendEmails } from '../controllers/email.controller.js';
 
 import {
   createEmailModel,
   getEmailModels,
   getEmailModelById,
   updateEmailModel,
-  deleteEmailModel
-} from '../controllers/modelController.js';
-
+  deleteEmailModel,
+} from '../controllers/model.controller.js';
 
 const router = express.Router();
 

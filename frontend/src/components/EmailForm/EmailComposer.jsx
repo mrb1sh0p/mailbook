@@ -13,11 +13,17 @@ const EmailComposer = ({
   onRemoveRecipient,
   onContentChange,
   onSend,
-  loading
+  loading,
 }) => (
-  <form onSubmit={(e) => { e.preventDefault(); onSend(); }} className="bg-white p-6 rounded-xl shadow-sm">
+  <form
+    onSubmit={(e) => {
+      e.preventDefault();
+      onSend();
+    }}
+    className="bg-white p-6 rounded-xl shadow-sm"
+  >
     <h2 className="text-2xl font-bold mb-6 text-gray-800">Enviar E-mails</h2>
-    
+
     {emailData.recipients.map((recipient, index) => (
       <RecipientInput
         key={index}
@@ -31,19 +37,12 @@ const EmailComposer = ({
     ))}
 
     <div className="flex flex-col md:flex-row gap-4 mb-6">
-      <Button
-        variant="secondary"
-        onClick={onAddRecipient}
-        className="mb-4"
-      >
+      <Button variant="secondary" onClick={onAddRecipient} className="mb-4">
         + Adicionar Destinatário
       </Button>
     </div>
 
-    <HTMLEditor
-      content={emailData.html}
-      onChange={onContentChange}
-    />
+    <HTMLEditor content={emailData.html} onChange={onContentChange} />
 
     <Button
       type="submit"
@@ -71,7 +70,7 @@ EmailComposer.propTypes = {
   onRemoveRecipient: PropTypes.func.isRequired,
   onContentChange: PropTypes.func.isRequired,
   onSend: PropTypes.func.isRequired,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
 };
 
 export default EmailComposer;
