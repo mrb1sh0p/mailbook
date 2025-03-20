@@ -12,11 +12,23 @@ export const useModel = () => {
     content: '',
   });
 
+  const fetchModels = async () => {
+    try {
+      setLoading(true);
+      const { data } = await axios.get('/api/v1/model');
+      setModelList(data);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Erro ao carregar modelos');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const saveModel = async (model) => {
     try {
       setLoading(true);
       const { data } = await axios.post('/api/v1/model', model);
-      setModelList(prev => [...prev, data]);
+      setModelList((prev) => [...prev, data]);
       return data;
     } catch (err) {
       setError(err.response?.data?.error || 'Erro ao salvar modelo');
@@ -29,10 +41,11 @@ export const useModel = () => {
   const updateModel = async (updatedModel) => {
     try {
       setLoading(true);
-      const { data } = await axios.put(`/api/v1/model/${updatedModel.id}`, updatedModel);
-      setModelList(prev => 
-        prev.map(model => model.id === data.id ? data : model)
+      const { data } = await axios.put(
+        `/api/v1/model/${updatedModel.id}`,
+        updatedModel
       );
+      fetchModels();
       return data;
     } catch (err) {
       setError(err.response?.data?.error || 'Erro ao atualizar modelo');
@@ -46,22 +59,10 @@ export const useModel = () => {
     try {
       setLoading(true);
       await axios.delete(`/api/v1/model/${id}`);
-      setModelList(prev => prev.filter(model => model.id !== id));
+      setModelList((prev) => prev.filter((model) => model.id !== id));
     } catch (err) {
       setError(err.response?.data?.error || 'Erro ao excluir modelo');
       throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchModels = async () => {
-    try {
-      setLoading(true);
-      const { data } = await axios.get('/api/v1/models');
-      setModelList(data);
-    } catch (err) {
-      setError(err.response?.data?.error || 'Erro ao carregar modelos');
     } finally {
       setLoading(false);
     }
@@ -78,7 +79,7 @@ export const useModel = () => {
     loading,
     fetchModels,
     selectModel: (id) => {
-      const model = modelList.find(m => m.id.toString() === id.toString());
+      const model = modelList.find((m) => m.id.toString() === id.toString());
       setSelectedModel(model || null);
     },
     saveModel,
@@ -86,7 +87,7 @@ export const useModel = () => {
     deleteModel,
     newModel,
     setNewModel,
-  }
+  };
 };
 
 export default useModel;
