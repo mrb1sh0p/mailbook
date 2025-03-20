@@ -4,7 +4,7 @@ import {
   convertHTMLToText,
 } from '../../utils/convertTextToHTML.js';
 import useModels from '../../hooks/useModel.js';
-import ModelSelector from '../modelForm/ModelSelector.jsx';
+import ModelSelector from '../ModelForm/ModelSelector.jsx';
 
 const HTMLEditor = ({ value, onChange }) => {
   const [text, setText] = useState(convertHTMLToText(value));
