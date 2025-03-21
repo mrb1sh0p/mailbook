@@ -29,7 +29,7 @@ export const sendEmails = async (req, res) => {
       })
     );
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       sentCount: results.filter((r) => !r.error).length,
       failedCount: results.filter((r) => r.error).length,
@@ -37,7 +37,7 @@ export const sendEmails = async (req, res) => {
     });
   } catch (error) {
     console.error('Erro no envio:', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Erro ao enviar e-mails',
       details: error.message,
       ...(process.env.NODE_ENV === 'development' && { stack: error.stack }),

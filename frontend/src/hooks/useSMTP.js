@@ -6,7 +6,10 @@ export const useSMTP = () => {
   const [selectedSmtp, setSelectedSmtp] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const token = localStorage.getItem('token');
 
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+  
   const fetchSMTPConfigs = async () => {
     try {
       setLoading(true);
@@ -23,7 +26,7 @@ export const useSMTP = () => {
     try {
       setLoading(true);
       const { data } = await axios.post('/api/v1/smtp', config);
-      setSmtpList(prev => [...prev, data]);
+      setSmtpList((prev) => [...prev, data]);
       return data;
     } catch (err) {
       setError(err.response?.data?.error || 'Erro ao salvar configuração');
@@ -34,7 +37,7 @@ export const useSMTP = () => {
   };
 
   const selectSMTPConfig = (id) => {
-    const config = smtpList.find(c => c.id.toString() === id.toString());
+    const config = smtpList.find((c) => c.id.toString() === id.toString());
     setSelectedSmtp(config || null);
   };
 
@@ -43,8 +46,8 @@ export const useSMTP = () => {
   };
 
   const updateSMTPConfig = (updatedConfig) => {
-    setSmtpList(prev => 
-      prev.map(config => 
+    setSmtpList((prev) =>
+      prev.map((config) =>
         config.id === updatedConfig.id ? updatedConfig : config
       )
     );
@@ -57,7 +60,7 @@ export const useSMTP = () => {
     try {
       setLoading(true);
       await axios.delete(`/api/v1/smtp/${id}`);
-      setSmtpList(prev => prev.filter(config => config.id !== id));
+      setSmtpList((prev) => prev.filter((config) => config.id !== id));
       if (selectedSmtp?.id === id) {
         setSelectedSmtp(null);
       }
@@ -83,6 +86,6 @@ export const useSMTP = () => {
     saveSMTPConfig,
     updateSMTPConfig,
     deleteSMTPConfig,
-    fetchSMTPConfigs
+    fetchSMTPConfigs,
   };
 };

@@ -64,6 +64,7 @@ export const Login = async (req, res) => {
       token,
     });
   } catch (error) {
+    console.error('Erro ao autenticar:', error);
     res.status(500).json({ message: error.message });
   }
 };

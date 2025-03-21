@@ -9,7 +9,7 @@ export const uploadFile = (req, res) => {
       });
     }
 
-    res.json({
+    return res.json({
       filename: req.file.filename,
       originalname: req.file.originalname,
       size: req.file.size,

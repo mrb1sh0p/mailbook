@@ -1,5 +1,4 @@
 const ModelSelector = ({ models, selectedId, onSelect }) => {
-  console.log(models);
   return (
     <select
       className="px-2 py-1 border rounded-md text-sm bg-white hover:bg-gray-50 focus:outline-none"

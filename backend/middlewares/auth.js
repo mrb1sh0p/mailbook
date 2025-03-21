@@ -1,5 +1,7 @@
-export const requireSuperAdmin = async () => {
+export const requireSuperAdmin = async (req, res, next) => {
   const { role } = req.user;
+
+  console.log(role);
 
   if (role !== 'overload') {
     return res.status(403).json({
@@ -11,7 +13,7 @@ export const requireSuperAdmin = async () => {
   next();
 };
 
-export const requireOrgAdmin = async () => {
+export const requireOrgAdmin = async (req, res, next) => {
   const { role } = req.user;
 
   if (role === 'overload') {

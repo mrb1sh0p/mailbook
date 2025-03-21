@@ -28,9 +28,10 @@ export function AuthProvider({ children }) {
     try {
       const { email, password } = credentials;
 
-      console.log({ email, password });
-
-      const { data } = await axios.post('/api/v1/login', { email, password });
+      const { data } = await axios.post('/api/v1/login', {
+        email,
+        password,
+      });
 
       if (data.token) {
         localStorage.setItem('token', data.token);
@@ -56,7 +57,6 @@ export function AuthProvider({ children }) {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  console.log(context);
   if (!context) {
     throw new Error('useAuth deve ser usado dentro de um AuthProvider');
   }

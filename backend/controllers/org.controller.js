@@ -7,9 +7,9 @@ export const addUserToOrg = async (req, res) => {
       'INSERT INTO user_is_orgs (user_id, org_id) VALUES ($1, $2)',
       [id, orgId]
     );
-    res.status(204).json();
+    return res.status(204).json();
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -21,9 +21,9 @@ export const updateRoleUserInOrg = async (req, res) => {
       'UPDATE user_is_orgs SET role = $1 WHERE user_id = $2 AND org_id = $3',
       [role, id, orgId]
     );
-    res.status(204).json();
+    return res.status(204).json();
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -34,9 +34,9 @@ export const removeUserFromOrg = async (req, res) => {
       'DELETE FROM user_is_orgs WHERE user_id = $1 AND org_id = $2',
       [id, orgId]
     );
-    res.status(204).json();
+    return res.status(204).json();
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -47,9 +47,9 @@ export const getOrgsByUserId = async (req, res) => {
       'SELECT orgs.* FROM orgs JOIN user_is_orgs ON orgs.id = user_is_orgs.org_id WHERE user_is_orgs.user_id = $1',
       [id]
     );
-    res.status(200).json(rows);
+    return res.status(200).json(rows);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -60,18 +60,18 @@ export const getUsersByOrgId = async (req, res) => {
       'SELECT users.* FROM users JOIN user_is_orgs ON users.id = user_is_orgs.user_id WHERE user_is_orgs.org_id = $1',
       [id]
     );
-    res.status(200).json(rows);
+    return res.status(200).json(rows);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
 export const getOrgs = async (req, res) => {
   try {
     const { rows } = await pool.query('SELECT * FROM orgs');
-    res.status(200).json(rows);
+    return res.status(200).json(rows);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -79,9 +79,9 @@ export const getOrgById = async (req, res) => {
   try {
     const { id } = req.params;
     const { rows } = await pool.query('SELECT * FROM orgs WHERE id = $1', [id]);
-    res.status(200).json(rows[0]);
+    return res.status(200).json(rows[0]);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -92,9 +92,9 @@ export const createOrg = async (req, res) => {
       'INSERT INTO orgs (name) VALUES ($1) RETURNING *',
       [name]
     );
-    res.status(201).json(rows[0]);
+    return res.status(201).json(rows[0]);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -106,9 +106,9 @@ export const updateOrg = async (req, res) => {
       'UPDATE orgs SET name = $1 WHERE id = $2 RETURNING *',
       [name, id]
     );
-    res.status(200).json(rows[0]);
+    return res.status(200).json(rows[0]);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -116,8 +116,8 @@ export const deleteOrg = async (req, res) => {
   try {
     const { id } = req.params;
     await pool.query('DELETE FROM orgs WHERE id = $1', [id]);
-    res.status(204).json();
+    return res.status(204).json();
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };

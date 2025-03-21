@@ -2,10 +2,14 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 export const useModel = () => {
+  const token = localStorage.getItem('token');
+
   const [modelList, setModelList] = useState([]);
   const [selectedModel, setSelectedModel] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   const [newModel, setNewModel] = useState({
     title: '',
