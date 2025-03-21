@@ -44,6 +44,7 @@ const SMTPConfigForm = ({ initialConfig, onUpdate, onSave, loading }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log({ config });
     const cleanedConfig = {
       ...config,
       port: config.port,
