@@ -9,10 +9,11 @@ import {
   removeUserFromOrg,
   updateRoleUserInOrg,
   getOrgsByUserId,
+  getUsersByOrgId,
 } from '../controllers/org.controller.js';
 
 import { requireOrgAdmin, requireSuperAdmin } from '../middlewares/auth.js';
-import verifyToken from '../middleware/verify.js';
+import verifyToken from '../middlewares/verify.js';
 
 const router = express.Router();
 

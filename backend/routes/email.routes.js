@@ -16,7 +16,7 @@ import {
 } from '../controllers/model.controller.js';
 
 import { requireOrgAdmin } from '../middlewares/auth.js';
-import verifyToken from '../middleware/verify.js';
+import verifyToken from '../middlewares/verify.js';
 
 const router = express.Router();
 
