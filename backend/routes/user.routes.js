@@ -1,4 +1,5 @@
 import express from 'express';
+import verifyToken from '../middlewares/verify.js';
 import {
   createUser,
   getUserById,
@@ -11,11 +12,12 @@ import {
   getOrgsByUserId,
   getUsersByOrgId,
 } from '../controllers/org.controller.js';
-
-import verifyToken from '../middlewares/verify.js';
+import { Login } from '../controllers/access.controller.js';
 import { requireOrgAdmin, requireSuperAdmin } from '../middlewares/auth.js';
 
 const router = express.Router();
+
+router.post('/login', Login);
 
 router.use(verifyToken);
 router.get('/user', getUserById);

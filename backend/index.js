@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import morgan from 'morgan'; // middleware para log
 import emailRoutes from './routes/email.routes.js';
 import orgsRoutes from './routes/orgs.routes.js';
 import userRoutes from './routes/user.routes.js';
@@ -11,7 +10,6 @@ const app = express();
 // Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 const apiVersion = '/api/v1';
 app.use(apiVersion, emailRoutes);
