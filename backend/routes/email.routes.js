@@ -15,24 +15,16 @@ import {
   deleteEmailModel,
 } from '../controllers/model.controller.js';
 
-import { requireOrgAdmin } from '../middlewares/auth.js';
 import verifyToken from '../middlewares/verify.js';
 
 const router = express.Router();
 
 router.use(verifyToken);
-// Rotas SMTP
-router.post('/smtp', requireOrgAdmin, createSmtpConfig);
-router.get('/smtp', getSmtpConfigs);
-router.get('/smtp/:id', getSmtpConfigById);
 
-// Upload de arquivo
 router.post('/upload', uploadFile);
 
-// Envio de e-mails
 router.post('/send', sendEmails);
 
-// Rotas de modelos
 router.post('/model', createEmailModel);
 router.get('/model', getEmailModels);
 router.get('/model/:id', getEmailModelById);

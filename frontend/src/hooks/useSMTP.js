@@ -2,18 +2,20 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 export const useSMTP = () => {
+  const token = localStorage.getItem('token');
+
   const [smtpList, setSmtpList] = useState([]);
   const [selectedSmtp, setSelectedSmtp] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const token = localStorage.getItem('token');
 
   axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-  
-  const fetchSMTPConfigs = async () => {
+
+  const fetchSMTP = async () => {
     try {
       setLoading(true);
       const { data } = await axios.get('/api/v1/smtp');
+      console.log({ data });
       setSmtpList(data);
     } catch (err) {
       setError(err.response?.data?.error || 'Erro ao carregar configurações');
@@ -22,11 +24,13 @@ export const useSMTP = () => {
     }
   };
 
-  const saveSMTPConfig = async (config) => {
+  const saveSMTP = async (config) => {
     try {
       setLoading(true);
       const { data } = await axios.post('/api/v1/smtp', config);
-      setSmtpList((prev) => [...prev, data]);
+      setSmtpList((prev) =>
+        prev.map((config) => (config.id === data.id ? data : config))
+      );
       return data;
     } catch (err) {
       setError(err.response?.data?.error || 'Erro ao salvar configuração');
@@ -36,27 +40,39 @@ export const useSMTP = () => {
     }
   };
 
-  const selectSMTPConfig = (id) => {
+  const selectSMTP = (id) => {
     const config = smtpList.find((c) => c.id.toString() === id.toString());
     setSelectedSmtp(config || null);
   };
 
-  const resetSelectedConfig = () => {
-    setSelectedSmtp(null);
-  };
+  const updateSMTP = async (updatedConfig) => {
+    try {
+      setLoading(true);
+      console.log({ updateSMTP });
 
-  const updateSMTPConfig = (updatedConfig) => {
-    setSmtpList((prev) =>
-      prev.map((config) =>
-        config.id === updatedConfig.id ? updatedConfig : config
-      )
-    );
-    if (selectedSmtp?.id === updatedConfig.id) {
-      setSelectedSmtp(updatedConfig);
+      const { data } = await axios.put(
+        `/api/v1/smtp/${updatedConfig.id}`,
+        updatedConfig
+      );
+
+      setSmtpList((prev) =>
+        prev.map((config) => (config.id === data.id ? data : config))
+      );
+
+      if (selectedSmtp?.id === data.id) {
+        setSelectedSmtp(data);
+      }
+
+      return data;
+    } catch (err) {
+      setError(err.response?.data?.error || 'Erro ao atualizar configuração');
+      throw err;
+    } finally {
+      setLoading(false);
     }
   };
 
-  const deleteSMTPConfig = async (id) => {
+  const deleteSMTP = async (id) => {
     try {
       setLoading(true);
       await axios.delete(`/api/v1/smtp/${id}`);
@@ -73,7 +89,7 @@ export const useSMTP = () => {
   };
 
   useEffect(() => {
-    fetchSMTPConfigs();
+    fetchSMTP();
   }, []);
 
   return {
@@ -81,11 +97,10 @@ export const useSMTP = () => {
     selectedSmtp,
     loading,
     error,
-    resetSelectedConfig,
-    selectSMTPConfig,
-    saveSMTPConfig,
-    updateSMTPConfig,
-    deleteSMTPConfig,
-    fetchSMTPConfigs,
+    selectSMTP,
+    saveSMTP,
+    updateSMTP,
+    deleteSMTP,
+    fetchSMTP,
   };
 };

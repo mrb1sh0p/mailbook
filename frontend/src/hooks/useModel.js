@@ -42,6 +42,11 @@ export const useModel = () => {
     }
   };
 
+  const selectModel = (id) => {
+    const model = modelList.find((m) => m.id.toString() === id.toString());
+    setSelectedModel(model || null);
+  };
+
   const updateModel = async (updatedModel) => {
     try {
       setLoading(true);
@@ -81,15 +86,12 @@ export const useModel = () => {
     selectedModel,
     error,
     loading,
+    newModel,
     fetchModels,
-    selectModel: (id) => {
-      const model = modelList.find((m) => m.id.toString() === id.toString());
-      setSelectedModel(model || null);
-    },
+    selectModel,
     saveModel,
     updateModel,
     deleteModel,
-    newModel,
     setNewModel,
   };
 };

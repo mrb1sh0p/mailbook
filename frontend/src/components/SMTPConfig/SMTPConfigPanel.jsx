@@ -5,17 +5,15 @@ import SMTPConfigSelector from './SMTPConfigSelector';
 const SMTPConfigPanel = ({
   configs,
   selectedConfig,
-  onSave,
   onSelect,
   loading,
   showConfig,
   toggleShowConfig,
-  onDelete,
-  resetSelectedConfig,
+  onUpdate,
+  onSave,
 }) => {
   const handleSelect = (id) => {
     onSelect(id);
-    if (!id) resetSelectedConfig();
   };
 
   return (
@@ -41,16 +39,8 @@ const SMTPConfigPanel = ({
           />
 
           <SMTPConfigForm
-            initialConfig={
-              selectedConfig || {
-                title: '',
-                host: '',
-                port: 587,
-                secure: 'TLS',
-                username: '',
-                pass: '',
-              }
-            }
+            initialConfig={selectedConfig || {}}
+            onUpdate={onUpdate}
             onSave={onSave}
             loading={loading}
           />

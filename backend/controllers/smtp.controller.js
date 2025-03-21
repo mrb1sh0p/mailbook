@@ -65,3 +65,25 @@ export const getSmtpConfigById = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+export const updateSmtpConfig = async (req, res) => {
+  try {
+    const { title, host, port, secure, username, pass } = req.body;
+
+    const result = await pool.query(
+      `UPDATE smtp_config 
+      SET title = $1, host = $2, port = $3, secure = $4, username = $5, pass = $6
+      WHERE id = $7
+      RETURNING *`,
+      [title, host, port, secure, username, pass, req.params.id]
+    );
+
+    if (!result.rows.length) {
+      return res.status(404).json({ error: 'Configuração não encontrada' });
+    }
+
+    return res.json(result.rows[0]);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};

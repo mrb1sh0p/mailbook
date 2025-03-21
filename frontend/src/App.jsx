@@ -10,25 +10,23 @@ const App = () => {
   const {
     smtpList,
     selectedSmtp,
-    saveSMTPConfig,
-    selectSMTPConfig,
-    loading: smtpLoading,
     error: smtpError,
-    deleteSMTPConfig,
-    updateSMTPConfig,
-    resetSelectedConfig
+    loading: smtpLoading,
+    selectSMTP,
+    saveSMTP,
+    updateSMTP,
   } = useSMTP();
 
   const {
     emailData,
-    sendEmails,
     loading: emailLoading,
     error: emailError,
+    sendEmails,
     updateRecipient,
     handleFileUpload,
     addRecipient,
     removeRecipient,
-    setEmailData
+    setEmailData,
   } = useEmail();
 
   const handleSend = async () => {
@@ -36,44 +34,32 @@ const App = () => {
       alert('Selecione uma configuração SMTP primeiro');
       return;
     }
-    
+
     try {
       await sendEmails(selectedSmtp);
-      setEmailData(prev => ({
+      setEmailData((prev) => ({
         ...prev,
-        recipients: [{ to: '', subject: '', attachment: null }]
+        recipients: [{ to: '', subject: '', attachment: null }],
       }));
     } catch (error) {
       console.error('Falha no envio:', error);
     }
   };
 
-  const handleSaveConfig = async (config) => {
-    try {
-      const savedConfig = await saveSMTPConfig(config);
-      if (config.id) {
-        updateSMTPConfig(savedConfig);
-      }
-    } catch (error) {
-      console.error('Erro ao salvar configuração:', error);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto space-y-8">
-        <FeedbackMessage 
-          type={smtpError ? 'error' : emailError ? 'error' : 'success'} 
-          message={smtpError || emailError} 
+        <FeedbackMessage
+          type={smtpError ? 'error' : emailError ? 'error' : 'success'}
+          message={smtpError || emailError}
         />
 
         <SMTPConfigPanel
           configs={smtpList}
           selectedConfig={selectedSmtp}
-          onSave={handleSaveConfig}
-          onSelect={selectSMTPConfig}
-          resetSelectedConfig={resetSelectedConfig}
-          onDelete={deleteSMTPConfig}
+          onSelect={selectSMTP}
+          onSave={saveSMTP}
+          onUpdate={updateSMTP}
           loading={smtpLoading}
           showConfig={showSmtpConfig}
           toggleShowConfig={() => setShowSmtpConfig(!showSmtpConfig)}
@@ -86,7 +72,9 @@ const App = () => {
           onAddRecipient={addRecipient}
           onRemoveRecipient={removeRecipient}
           onSend={handleSend}
-          onContentChange={(html) => setEmailData(prev => ({ ...prev, html }))} 
+          onContentChange={(html) =>
+            setEmailData((prev) => ({ ...prev, html }))
+          }
           loading={emailLoading}
         />
       </div>
