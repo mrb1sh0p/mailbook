@@ -17,11 +17,11 @@ export const requireOrgAdmin = async (req, res, next) => {
   const { role } = req.user;
 
   if (role === 'overload') {
-    next();
+    return next();
   } else if (role !== 'user') {
     return res.status(403).json({
       success: false,
-      error: 'Acesso restrito a membros de organização',
+      error: 'Acesso restrito a administradores de organização',
     });
   }
 
