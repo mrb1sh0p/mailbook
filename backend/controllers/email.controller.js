@@ -29,7 +29,7 @@ export const sendEmails = async (req, res) => {
       })
     );
 
-    res.json({
+    res.status(200).json({
       success: true,
       sentCount: results.filter((r) => !r.error).length,
       failedCount: results.filter((r) => r.error).length,

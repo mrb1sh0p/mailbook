@@ -15,10 +15,14 @@ import {
   deleteEmailModel,
 } from '../controllers/model.controller.js';
 
+import { requireOrgAdmin } from '../middlewares/auth.js';
+import verifyToken from '../middleware/verify.js';
+
 const router = express.Router();
 
+router.use(verifyToken);
 // Rotas SMTP
-router.post('/smtp', createSmtpConfig);
+router.post('/smtp', requireOrgAdmin, createSmtpConfig);
 router.get('/smtp', getSmtpConfigs);
 router.get('/smtp/:id', getSmtpConfigById);
 
