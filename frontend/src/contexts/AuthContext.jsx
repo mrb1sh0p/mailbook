@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { Navigate } from 'react-router';
 import axios from 'axios';
 
 const AuthContext = createContext();
@@ -37,6 +38,8 @@ export function AuthProvider({ children }) {
         localStorage.setItem('token', data.token);
         setUser(data.user);
       }
+
+      <Navigate to="/login" replace />;
     } catch (error) {
       console.error('Erro no login:', error);
       throw error;

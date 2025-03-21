@@ -18,24 +18,6 @@ export const Login = async (req, res) => {
       return res.status(401).json({ message: 'Usuário ou senha inválidos' });
     }
 
-    if (result.rows[0].role === 'overload') {
-      const token = jwt.sign(
-        {
-          id: result.rows[0].id,
-          role: result.rows[0].role,
-        },
-        process.env.SECRET_KEY,
-        {
-          expiresIn: '2h',
-        }
-      );
-
-      return res.status(200).json({
-        message: 'Autenticado com sucesso como Overlord',
-        token,
-      });
-    }
-
     const userIsOrgs = await pool.query(
       `SELECT * FROM user_is_orgs
       WHERE user_id = $1`,
