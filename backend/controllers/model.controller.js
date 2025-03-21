@@ -1,8 +1,7 @@
 import { pool } from '../db.js';
 
-
 export const createEmailModel = async (req, res) => {
-  const {title, content} = req.body;
+  const { title, content } = req.body;
 
   try {
     const result = await pool.query(
@@ -17,7 +16,7 @@ export const createEmailModel = async (req, res) => {
     console.error('Erro no banco de dados:', error);
     res.status(500).json({
       error: 'Erro ao salvar modelo',
-      details: error.message
+      details: error.message,
     });
   }
 };
@@ -33,7 +32,9 @@ export const getEmailModels = async (req, res) => {
 
 export const getEmailModelById = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM email_model WHERE id = $1', [req.params.id]);
+    const result = await pool.query('SELECT * FROM email_model WHERE id = $1', [
+      req.params.id,
+    ]);
     res.json(result.rows[0] || {});
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -41,7 +42,7 @@ export const getEmailModelById = async (req, res) => {
 };
 
 export const updateEmailModel = async (req, res) => {
-  const {title, content} = req.body;
+  const { title, content } = req.body;
 
   try {
     const result = await pool.query(
@@ -56,7 +57,7 @@ export const updateEmailModel = async (req, res) => {
     console.error('Erro no banco de dados:', error);
     res.status(500).json({
       error: 'Erro ao atualizar modelo',
-      details: error.message
+      details: error.message,
     });
   }
 };
