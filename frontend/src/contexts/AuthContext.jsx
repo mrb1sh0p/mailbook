@@ -1,12 +1,13 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { Navigate } from 'react-router';
 import axios from 'axios';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { useUser } from '../hooks/useUser';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { getDataUser } = useUser();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -23,7 +24,7 @@ export function AuthProvider({ children }) {
     };
 
     checkAuth();
-  }, []);
+  }, [getDataUser]);
 
   const login = async (credentials) => {
     try {
@@ -38,8 +39,6 @@ export function AuthProvider({ children }) {
         localStorage.setItem('token', data.token);
         setUser(data.user);
       }
-
-      <Navigate to="/login" replace />;
     } catch (error) {
       console.error('Erro no login:', error);
       throw error;

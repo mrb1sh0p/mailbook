@@ -1,9 +1,5 @@
 import express from 'express';
-import {
-  createSmtpConfig,
-  getSmtpConfigs,
-  getSmtpConfigById,
-} from '../controllers/smtp.controller.js';
+
 import { uploadFile } from '../controllers/upload.controller.js';
 import { sendEmails } from '../controllers/email.controller.js';
 

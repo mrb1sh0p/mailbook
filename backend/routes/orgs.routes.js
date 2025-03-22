@@ -17,6 +17,7 @@ import verifyToken from '../middlewares/verify.js';
 
 const router = express.Router();
 
+router.use(verifyToken);
 router.post('/orgs', requireSuperAdmin, createOrg);
 router.get('/orgs/all', requireSuperAdmin, getOrgs);
 router.get('/orgs/:id', requireSuperAdmin, getOrgById);

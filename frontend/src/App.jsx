@@ -1,12 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SMTPConfigPanel from './components/SMTPConfig/SMTPConfigPanel';
 import EmailComposer from './components/EmailForm/EmailComposer';
 import FeedbackMessage from './components/UI/FeedbackMessage';
 import { useSMTP } from './hooks/useSMTP';
 import { useEmail } from './hooks/useEmail';
+import { useUser } from './hooks/useUser';
+import { useAuth } from './contexts/AuthContext';
 
 const App = () => {
+  const { getDataUser, loading } = useUser();
+  const { logout } = useAuth();
+  const [user, setUser] = useState(null);
   const [showSmtpConfig, setShowSmtpConfig] = useState(true);
+
   const {
     smtpList,
     selectedSmtp,
@@ -29,6 +35,15 @@ const App = () => {
     setEmailData,
   } = useEmail();
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const data = await getDataUser();
+      setUser(data);
+    };
+    fetchUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleSend = async () => {
     if (!selectedSmtp) {
       alert('Selecione uma configuração SMTP primeiro');
@@ -49,10 +64,22 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto space-y-8">
-        <FeedbackMessage
-          type={smtpError ? 'error' : emailError ? 'error' : 'success'}
-          message={smtpError || emailError}
-        />
+        <header className="flex justify-between items-center">
+          {loading ? (
+            <div>Carregando...</div>
+          ) : (
+            <div>
+              <p>
+                {user?.name} - {user?.orgName}
+              </p>
+            </div>
+          )}
+          <button onClick={() => logout()}>Sair</button>
+        </header>
+
+        {(smtpError || emailError) && (
+          <FeedbackMessage type="error" message={smtpError || emailError} />
+        )}
 
         <SMTPConfigPanel
           configs={smtpList}
@@ -62,7 +89,7 @@ const App = () => {
           onUpdate={updateSMTP}
           loading={smtpLoading}
           showConfig={showSmtpConfig}
-          toggleShowConfig={() => setShowSmtpConfig(!showSmtpConfig)}
+          toggleShowConfig={() => setShowSmtpConfig((prev) => !prev)}
         />
 
         <EmailComposer

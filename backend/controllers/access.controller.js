@@ -50,3 +50,23 @@ export const Login = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getUserData = async (req, res) => {
+  const { id } = req.user;
+
+  try {
+    const { rows } = await pool.query(
+      `SELECT users.email, user_is_orgs.role, orgs.name
+      FROM users
+      JOIN user_is_orgs ON users.id = user_is_orgs.user_id
+      JOIN orgs ON user_is_orgs.org_id = orgs.id
+      WHERE users.id = $1`,
+      [id]
+    );
+
+    return res.status(200).json(rows[0]);
+  } catch (error) {
+    console.error('Erro ao buscar dados do usuário:', error);
+    return res.status(500).json({ message: error.message });
+  }
+};
