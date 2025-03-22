@@ -5,8 +5,6 @@ const ProtectedRoute = () => {
   const { overlord, loading } = useAuth();
 
   if (loading) return <div>Carregando...</div>;
-
-  console.log(overlord);
   return overlord ? <Outlet /> : <Navigate to="/login_overlord" replace />;
 };
 

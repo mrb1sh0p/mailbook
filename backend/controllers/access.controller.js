@@ -35,6 +35,7 @@ export const LoginOverlord = async (req, res) => {
     const token = jwt.sign(
       {
         id: result.rows[0].id,
+        role: result.rows[0].role,
       },
       process.env.SECRET_KEY,
       {
