@@ -12,12 +12,13 @@ import {
   getOrgsByUserId,
   getUsersByOrgId,
 } from '../controllers/org.controller.js';
-import { Login, getUserData } from '../controllers/access.controller.js';
+import { Login, getUserData, LoginOverlord } from '../controllers/access.controller.js';
 import { requireOrgAdmin, requireSuperAdmin } from '../middlewares/auth.js';
 
 const router = express.Router();
 
 router.post('/login', Login);
+router.post('/login/overlord', LoginOverlord);
 
 router.use(verifyToken);
 router.get('/user', getUserById);
