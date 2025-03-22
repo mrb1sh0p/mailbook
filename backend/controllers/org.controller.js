@@ -40,7 +40,7 @@ export const removeUserFromOrg = async (req, res) => {
   }
 };
 
-export const getOrgsByUserId = async (req, res) => {
+export const getOrgsByUser = async (req, res) => {
   try {
     const { id } = req.params;
     const { rows } = await pool.query(
@@ -53,7 +53,7 @@ export const getOrgsByUserId = async (req, res) => {
   }
 };
 
-export const getUsersByOrgId = async (req, res) => {
+export const getUsersByOrg = async (req, res) => {
   try {
     const { id } = req.params;
     const { rows } = await pool.query(

@@ -18,6 +18,7 @@ export const useOverlord = () => {
       setOrgs(data);
     } catch (err) {
       console.error('Erro ao carregar organizações:', err);
+      setError(err.response?.data?.error || 'Erro ao carregar organizações');
       return null;
     } finally {
       setLoading(false);
@@ -28,9 +29,12 @@ export const useOverlord = () => {
     try {
       setLoading(true);
       const { data } = await axios.post('/api/v1/orgs', org);
+      // Atualiza a lista após criar
+      await fetchOrgs();
       return data;
     } catch (err) {
       console.error('Erro ao criar organização:', err);
+      setError(err.response?.data?.error || 'Erro ao criar organização');
       return null;
     } finally {
       setLoading(false);
@@ -41,9 +45,12 @@ export const useOverlord = () => {
     try {
       setLoading(true);
       const { data } = await axios.put(`/api/v1/orgs/${org.id}`, org);
+      // Atualiza a lista após atualizar
+      await fetchOrgs();
       return data;
     } catch (err) {
       console.error('Erro ao atualizar organização:', err);
+      setError(err.response?.data?.error || 'Erro ao atualizar organização');
       return null;
     } finally {
       setLoading(false);
@@ -54,9 +61,12 @@ export const useOverlord = () => {
     try {
       setLoading(true);
       const { data } = await axios.delete(`/api/v1/orgs/${orgId}`);
+      // Atualiza a lista após deletar
+      await fetchOrgs();
       return data;
     } catch (err) {
       console.error('Erro ao deletar organização:', err);
+      setError(err.response?.data?.error || 'Erro ao deletar organização');
       return null;
     } finally {
       setLoading(false);
@@ -70,6 +80,9 @@ export const useOverlord = () => {
       return data;
     } catch (err) {
       console.error('Erro ao adicionar usuário à organização:', err);
+      setError(
+        err.response?.data?.error || 'Erro ao adicionar usuário à organização'
+      );
       return null;
     } finally {
       setLoading(false);
@@ -85,6 +98,9 @@ export const useOverlord = () => {
       return data;
     } catch (err) {
       console.error('Erro ao remover usuário da organização:', err);
+      setError(
+        err.response?.data?.error || 'Erro ao remover usuário da organização'
+      );
       return null;
     } finally {
       setLoading(false);
@@ -100,9 +116,24 @@ export const useOverlord = () => {
       return data;
     } catch (err) {
       console.error('Erro ao atualizar papel do usuário na organização:', err);
+      setError(
+        err.response?.data?.error ||
+          'Erro ao atualizar papel do usuário na organização'
+      );
       return null;
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getUsersByOrg = async (orgId) => {
+    try {
+      const { data } = await axios.get(`/api/v1/org/${orgId}/users`);
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error('Erro ao buscar usuários da organização:', error);
+      return [];
     }
   };
 
@@ -114,5 +145,15 @@ export const useOverlord = () => {
     orgs,
     loading,
     error,
+    selectedOrg,
+    getUsersByOrg,
+    setSelectedOrg,
+    fetchOrgs,
+    createOrg,
+    updateOrg,
+    deleteOrg,
+    addUserToOrg,
+    removeUserFromOrg,
+    updateRoleUserInOrg,
   };
 };

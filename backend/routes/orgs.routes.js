@@ -8,8 +8,8 @@ import {
   addUserToOrg,
   removeUserFromOrg,
   updateRoleUserInOrg,
-  getOrgsByUserId,
-  getUsersByOrgId,
+  getOrgsByUser,
+  getUsersByOrg,
 } from '../controllers/org.controller.js';
 
 import { requireOrgAdmin, requireSuperAdmin } from '../middlewares/auth.js';
@@ -25,9 +25,9 @@ router.put('/orgs/:id', requireSuperAdmin, updateOrg);
 router.delete('/orgs/:id', requireSuperAdmin, deleteOrg);
 router.put('/orgs/:id/users/:userId', requireSuperAdmin, updateRoleUserInOrg);
 
-router.get('/org', getOrgsByUserId);
+router.get('/org', getOrgsByUser);
 router.put('/org/users/:userId', requireOrgAdmin, updateRoleUserInOrg);
-router.get('/org/:id/users', requireOrgAdmin, getUsersByOrgId);
+router.get('/org/:id/users', requireOrgAdmin, getUsersByOrg);
 router.post('/org/:id/users/:userId', requireOrgAdmin, addUserToOrg);
 router.delete('/org/:id/users/:userId', requireOrgAdmin, removeUserFromOrg);
 
