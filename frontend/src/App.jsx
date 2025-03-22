@@ -37,12 +37,15 @@ const App = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const data = await getDataUser();
-      setUser(data);
+      try {
+        const data = await getDataUser();
+        if (data) setUser(data);
+      } catch (error) {
+        console.error('Erro ao buscar usuário:', error);
+      }
     };
     fetchUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [getDataUser]);
 
   const handleSend = async () => {
     if (!selectedSmtp) {
@@ -57,7 +60,8 @@ const App = () => {
         recipients: [{ to: '', subject: '', attachment: null }],
       }));
     } catch (error) {
-      console.error('Falha no envio:', error);
+      console.error('Erro no envio de e-mails:', error);
+      alert('Falha no envio de e-mail. Verifique as configurações SMTP.');
     }
   };
 
@@ -70,11 +74,12 @@ const App = () => {
           ) : (
             <div>
               <p>
-                {user?.name} - {user?.orgName}
+                {user?.name || 'Usuário desconhecido'} -{' '}
+                {user?.orgName || 'Sem organização'}
               </p>
             </div>
           )}
-          <button onClick={() => logout()}>Sair</button>
+          <button onClick={logout}>Sair</button>
         </header>
 
         {(smtpError || emailError) && (

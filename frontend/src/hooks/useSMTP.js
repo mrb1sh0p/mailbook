@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 export const useSMTP = () => {
@@ -11,26 +11,27 @@ export const useSMTP = () => {
 
   axios.defaults.headers.common.Authorization = `Bearer ${token}`;
 
-  const fetchSMTP = async () => {
+  const fetchSMTP = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
     try {
-      setLoading(true);
       const { data } = await axios.get('/api/v1/smtp');
-      console.log({ data });
       setSmtpList(data);
     } catch (err) {
       setError(err.response?.data?.error || 'Erro ao carregar configurações');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const saveSMTP = async (config) => {
+    setLoading(true);
+    setError(null);
+
     try {
-      setLoading(true);
       const { data } = await axios.post('/api/v1/smtp', config);
-      setSmtpList((prev) =>
-        prev.map((config) => (config.id === data.id ? data : config))
-      );
+      setSmtpList((prev) => [...prev, data]);
       return data;
     } catch (err) {
       setError(err.response?.data?.error || 'Erro ao salvar configuração');
@@ -40,16 +41,11 @@ export const useSMTP = () => {
     }
   };
 
-  const selectSMTP = (id) => {
-    const config = smtpList.find((c) => c.id.toString() === id.toString());
-    setSelectedSmtp(config || null);
-  };
-
   const updateSMTP = async (updatedConfig) => {
-    try {
-      setLoading(true);
-      console.log({ updateSMTP });
+    setLoading(true);
+    setError(null);
 
+    try {
       const { data } = await axios.put(
         `/api/v1/smtp/${updatedConfig.id}`,
         updatedConfig
@@ -73,8 +69,10 @@ export const useSMTP = () => {
   };
 
   const deleteSMTP = async (id) => {
+    setLoading(true);
+    setError(null);
+
     try {
-      setLoading(true);
       await axios.delete(`/api/v1/smtp/${id}`);
       setSmtpList((prev) => prev.filter((config) => config.id !== id));
       if (selectedSmtp?.id === id) {
@@ -90,14 +88,14 @@ export const useSMTP = () => {
 
   useEffect(() => {
     fetchSMTP();
-  }, []);
+  }, [fetchSMTP]);
 
   return {
     smtpList,
     selectedSmtp,
     loading,
     error,
-    selectSMTP,
+    selectSMTP: setSelectedSmtp,
     saveSMTP,
     updateSMTP,
     deleteSMTP,
