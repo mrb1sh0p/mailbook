@@ -29,6 +29,8 @@ export const useSMTP = () => {
     setLoading(true);
     setError(null);
 
+    console.log(config);
+
     try {
       const { data } = await axios.post('/api/v1/smtp', config);
       setSmtpList((prev) => [...prev, data]);

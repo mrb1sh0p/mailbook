@@ -1,35 +1,38 @@
 import { useState, useEffect } from 'react';
 import Button from '../UI/Button';
 
+const defaultConfig = {
+  title: '',
+  host: '',
+  port: 587,
+  secure: 'TLS',
+  username: '',
+  pass: '',
+};
+
 const SMTPConfigForm = ({ initialConfig, onUpdate, onSave, loading }) => {
-  const [config, setConfig] = useState(initialConfig);
+  // Define o estado inicial: se houver uma config existente (atualização) usa-a, caso contrário, usa o defaultConfig
+  const initialState =
+    initialConfig && initialConfig.id ? initialConfig : defaultConfig;
+  const [config, setConfig] = useState(initialState);
   const [encryptionType, setEncryptionType] = useState(
-    initialConfig.secure === 'SSL' ? 'ssl' : 'tls'
+    initialState.secure?.toUpperCase() === 'SSL' ? 'ssl' : 'tls'
   );
 
+  // Atualiza o estado quando initialConfig mudar
   useEffect(() => {
-    setConfig(initialConfig);
-    setEncryptionType(
-      initialConfig.secure?.toLowerCase() === 'ssl' ? 'ssl' : 'tls'
-    );
+    const newState =
+      initialConfig && initialConfig.id ? initialConfig : defaultConfig;
+    setConfig(newState);
+    setEncryptionType(newState.secure?.toUpperCase() === 'SSL' ? 'ssl' : 'tls');
   }, [initialConfig]);
-
-  useEffect(() => {
-    if (!initialConfig.id) {
-      setConfig({
-        title: '',
-        host: '',
-        port: 587,
-        secure: 'TLS',
-        username: '',
-        pass: '',
-      });
-    }
-  }, [initialConfig.id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setConfig((prev) => ({ ...prev, [name]: value }));
+    setConfig((prev) => ({
+      ...prev,
+      [name]: name === 'port' ? Number(value) : value,
+    }));
   };
 
   const handleEncryptionChange = (e) => {
@@ -44,16 +47,11 @@ const SMTPConfigForm = ({ initialConfig, onUpdate, onSave, loading }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({ config });
-    const cleanedConfig = {
-      ...config,
-      port: config.port,
-    };
 
-    if (cleanedConfig.id) {
-      onUpdate(cleanedConfig);
+    if (config.id) {
+      onUpdate(config);
     } else {
-      onSave(cleanedConfig);
+      onSave(config);
     }
   };
 
@@ -158,7 +156,7 @@ const SMTPConfigForm = ({ initialConfig, onUpdate, onSave, loading }) => {
         loading={loading}
         className="w-full"
       >
-        {initialConfig.id ? 'Atualizar Configuração' : 'Salvar Configuração'}
+        {config.id ? 'Atualizar Configuração' : 'Salvar Configuração'}
       </Button>
     </form>
   );
