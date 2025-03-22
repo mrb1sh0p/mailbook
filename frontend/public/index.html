@@ -1,86 +1,70 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sistema profissional de envio de e-mails em massa com suporte HTML, múltiplos destinatários e anexos. Ideal para campanhas de email marketing e comunicações institucionais.">
-    <meta name="keywords" content="email marketing, envio em massa, SMTP, campanhas de email, comunicação corporativa">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Mass Email Pro - Sistema Profissional de Envio de E-mails">
-    <meta property="og:description" content="Plataforma segura para envio de e-mails em massa com rastreamento e relatórios detalhados">
-    <meta property="og:image" content="https://exemplo.com/images/og-image.jpg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Sistema profissional de envio de e-mails em massa com suporte HTML, múltiplos destinatários e anexos. Ideal para campanhas de email marketing e comunicações institucionais."
+    />
+    <meta
+      name="keywords"
+      content="email marketing, envio em massa, SMTP, campanhas de email, comunicação corporativa"
+    />
 
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Mass Email Pro - Sistema Profissional de Envio de E-mails">
-    <meta name="twitter:description" content="Solução completa para gestão de campanhas de email marketing corporativo">
-    <meta name="twitter:image" content="https://exemplo.com/images/twitter-card.jpg">
-
-    <!-- Schema.org -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "Mass Email Pro",
-        "applicationCategory": "BusinessApplication",
-        "operatingSystem": "Web",
-        "description": "Plataforma de envio de e-mails em massa com recursos profissionais",
-        "offers": {
-            "@type": "Offer",
-            "price": "0.00",
-            "priceCurrency": "BRL"
-        }
-    }
-    </script>
-
-    <link rel="canonical" href="https://exemplo.com">
-    <title>Mass Email - Sistema de Envio em Massa</title>
+    <link rel="canonical" href="https://exemplo.com" />
+    <title>MailBook</title>
 
     <!-- Tailwind CSS via CDN (recomendado usar build local em produção) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Favicons -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="manifest" href="/site.webmanifest">
+    <!-- <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" /> -->
 
     <style>
-        /* Custom Styles */
-        .loading-spinner {
-            @apply animate-spin rounded-full h-8 w-8 border-4 border-t-transparent border-blue-500;
-        }
+      /* Custom Styles */
+      .loading-spinner {
+        @apply animate-spin rounded-full h-8 w-8 border-4 border-t-transparent border-blue-500;
+      }
     </style>
-</head>
-<body class="bg-gray-50">
+  </head>
+  <body class="bg-gray-50">
     <div id="root">
-        <!-- Loading State -->
-        <div class="min-h-screen flex items-center justify-center">
-            <div class="text-center">
-                <div class="loading-spinner mx-auto"></div>
-                <p class="mt-4 text-gray-600">Carregando o sistema...</p>
-            </div>
+      <!-- Loading State -->
+      <div class="min-h-screen flex items-center justify-center">
+        <div class="text-center">
+          <div class="loading-spinner mx-auto"></div>
+          <p class="mt-4 text-gray-600">Carregando o sistema...</p>
         </div>
+      </div>
     </div>
 
     <!-- Microdata para SEO -->
     <div itemscope itemtype="https://schema.org/Organization" class="hidden">
-        <meta itemprop="name" content="Nome da Empresa">
-        <meta itemprop="description" content="Soluções profissionais de comunicação por e-mail">
-        <meta itemprop="logo" content="https://exemplo.com/logo.png">
-        <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-            <meta itemprop="streetAddress" content="Av. Principal, 123">
-            <meta itemprop="addressLocality" content="Vitória">
-            <meta itemprop="addressRegion" content="ES">
-            <meta itemprop="postalCode" content="29000-000">
-        </div>
-        <meta itemprop="email" content="contato@exemplo.com">
-        <meta itemprop="telephone" content="+55 (27) 3333-3333">
+      <meta itemprop="name" content="Nome da Empresa" />
+      <meta
+        itemprop="description"
+        content="Soluções profissionais de comunicação por e-mail"
+      />
+      <meta itemprop="logo" content="https://exemplo.com/logo.png" />
+      <div
+        itemprop="address"
+        itemscope
+        itemtype="https://schema.org/PostalAddress"
+      >
+        <meta itemprop="streetAddress" content="Av. Principal, 123" />
+        <meta itemprop="addressLocality" content="Vitória" />
+        <meta itemprop="addressRegion" content="ES" />
+        <meta itemprop="postalCode" content="29000-000" />
+      </div>
+      <meta itemprop="email" content="contato@exemplo.com" />
+      <meta itemprop="telephone" content="+55 (27) 3333-3333" />
     </div>
 
     <!-- Scripts -->
     <script src="/static/js/main.js" defer></script>
-</body>
+  </body>
 </html>

@@ -1,82 +1,102 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SMTPConfigPanel from './components/SMTPConfig/SMTPConfigPanel';
 import EmailComposer from './components/EmailForm/EmailComposer';
 import FeedbackMessage from './components/UI/FeedbackMessage';
 import { useSMTP } from './hooks/useSMTP';
 import { useEmail } from './hooks/useEmail';
+import { useUser } from './hooks/useUser';
+import { useAuth } from './contexts/AuthContext';
 
 const App = () => {
+  const { getDataUser, loading } = useUser();
+  const { logout } = useAuth();
+  const [user, setUser] = useState(null);
   const [showSmtpConfig, setShowSmtpConfig] = useState(true);
+
   const {
     smtpList,
     selectedSmtp,
-    saveSMTPConfig,
-    selectSMTPConfig,
-    loading: smtpLoading,
     error: smtpError,
-    deleteSMTPConfig,
-    updateSMTPConfig,
-    resetSelectedConfig
+    loading: smtpLoading,
+    selectSMTP,
+    saveSMTP,
+    updateSMTP,
   } = useSMTP();
 
   const {
     emailData,
-    sendEmails,
     loading: emailLoading,
     error: emailError,
+    sendEmails,
     updateRecipient,
     handleFileUpload,
     addRecipient,
     removeRecipient,
-    setEmailData
+    setEmailData,
   } = useEmail();
+
+  useEffect(() => {
+    if (!user) {
+      const fetchUser = async () => {
+        try {
+          const data = await getDataUser();
+          if (data) setUser(data);
+        } catch (error) {
+          console.error('Erro ao buscar usuário:', error);
+        }
+      };
+      fetchUser();
+    }
+  }, [getDataUser, user]);
 
   const handleSend = async () => {
     if (!selectedSmtp) {
       alert('Selecione uma configuração SMTP primeiro');
       return;
     }
-    
+
     try {
       await sendEmails(selectedSmtp);
-      setEmailData(prev => ({
+      setEmailData((prev) => ({
         ...prev,
-        recipients: [{ to: '', subject: '', attachment: null }]
+        recipients: [{ to: '', subject: '', attachment: null }],
       }));
     } catch (error) {
-      console.error('Falha no envio:', error);
-    }
-  };
-
-  const handleSaveConfig = async (config) => {
-    try {
-      const savedConfig = await saveSMTPConfig(config);
-      if (config.id) {
-        updateSMTPConfig(savedConfig);
-      }
-    } catch (error) {
-      console.error('Erro ao salvar configuração:', error);
+      console.error('Erro no envio de e-mails:', error);
+      alert('Falha no envio de e-mail. Verifique as configurações SMTP.');
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto space-y-8">
-        <FeedbackMessage 
-          type={smtpError ? 'error' : emailError ? 'error' : 'success'} 
-          message={smtpError || emailError} 
-        />
+        <header className="flex justify-between items-center">
+          {loading ? (
+            <div>Carregando...</div>
+          ) : (
+            <div>
+              <p>
+                {user?.name || 'Usuário desconhecido'} -{' '}
+                {user?.orgName || 'Sem organização'}
+              </p>
+            </div>
+          )}
+          <button onClick={logout}>Sair</button>
+        </header>
+
+        {(smtpError || emailError) && (
+          <FeedbackMessage type="error" message={smtpError || emailError} />
+        )}
 
         <SMTPConfigPanel
           configs={smtpList}
           selectedConfig={selectedSmtp}
-          onSave={handleSaveConfig}
-          onSelect={selectSMTPConfig}
-          resetSelectedConfig={resetSelectedConfig}
-          onDelete={deleteSMTPConfig}
+          onSelect={selectSMTP}
+          onSave={saveSMTP}
+          onUpdate={updateSMTP}
           loading={smtpLoading}
           showConfig={showSmtpConfig}
-          toggleShowConfig={() => setShowSmtpConfig(!showSmtpConfig)}
+          toggleShowConfig={() => setShowSmtpConfig((prev) => !prev)}
         />
 
         <EmailComposer
@@ -86,7 +106,9 @@ const App = () => {
           onAddRecipient={addRecipient}
           onRemoveRecipient={removeRecipient}
           onSend={handleSend}
-          onContentChange={(html) => setEmailData(prev => ({ ...prev, html }))} 
+          onContentChange={(html) =>
+            setEmailData((prev) => ({ ...prev, html }))
+          }
           loading={emailLoading}
         />
       </div>

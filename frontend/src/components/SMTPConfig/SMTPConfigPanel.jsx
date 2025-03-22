@@ -1,55 +1,46 @@
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import SMTPConfigForm from './SMTPConfigForm';
 import SMTPConfigSelector from './SMTPConfigSelector';
 
 const SMTPConfigPanel = ({
   configs,
   selectedConfig,
-  onSave,
   onSelect,
   loading,
   showConfig,
   toggleShowConfig,
-  onDelete,
-  resetSelectedConfig
+  onUpdate,
+  onSave,
 }) => {
-
   const handleSelect = (id) => {
     onSelect(id);
-    if (!id) resetSelectedConfig();
   };
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm">
-      <div 
+      <div
         className="flex items-center justify-between cursor-pointer"
         onClick={toggleShowConfig}
       >
         <h2 className="text-2xl font-bold text-gray-800">Configuração SMTP</h2>
         {showConfig ? (
-          <ChevronUpIcon className="h-6 w-6 text-gray-600" />
+          <FaChevronUp className="h-6 w-6 text-gray-600" />
         ) : (
-          <ChevronDownIcon className="h-6 w-6 text-gray-600" />
+          <FaChevronDown className="h-6 w-6 text-gray-600" />
         )}
       </div>
 
       {showConfig && (
         <div className="mt-6">
-          <SMTPConfigSelector 
+          <SMTPConfigSelector
             configs={configs}
             selectedId={selectedConfig?.id}
             onSelect={handleSelect}
           />
-          
-          <SMTPConfigForm 
-            initialConfig={selectedConfig || {
-              title: '',
-              host: '',
-              port: 587,
-              secure: 'TLS',
-              username: '',
-              pass: ''
-            }}
+
+          <SMTPConfigForm
+            initialConfig={selectedConfig || {}}
+            onUpdate={onUpdate}
             onSave={onSave}
             loading={loading}
           />

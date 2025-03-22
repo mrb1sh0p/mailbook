@@ -2,10 +2,14 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 export const useModel = () => {
+  const token = localStorage.getItem('token');
+
   const [modelList, setModelList] = useState([]);
   const [selectedModel, setSelectedModel] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   const [newModel, setNewModel] = useState({
     title: '',
@@ -36,6 +40,11 @@ export const useModel = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const selectModel = (id) => {
+    const model = modelList.find((m) => m.id.toString() === id.toString());
+    setSelectedModel(model || null);
   };
 
   const updateModel = async (updatedModel) => {
@@ -77,15 +86,12 @@ export const useModel = () => {
     selectedModel,
     error,
     loading,
+    newModel,
     fetchModels,
-    selectModel: (id) => {
-      const model = modelList.find((m) => m.id.toString() === id.toString());
-      setSelectedModel(model || null);
-    },
+    selectModel,
     saveModel,
     updateModel,
     deleteModel,
-    newModel,
     setNewModel,
   };
 };
