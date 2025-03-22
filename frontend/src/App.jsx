@@ -36,16 +36,18 @@ const App = () => {
   } = useEmail();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const data = await getDataUser();
-        if (data) setUser(data);
-      } catch (error) {
-        console.error('Erro ao buscar usuário:', error);
-      }
-    };
-    fetchUser();
-  }, [getDataUser]);
+    if (!user) {
+      const fetchUser = async () => {
+        try {
+          const data = await getDataUser();
+          if (data) setUser(data);
+        } catch (error) {
+          console.error('Erro ao buscar usuário:', error);
+        }
+      };
+      fetchUser();
+    }
+  }, [getDataUser, user]);
 
   const handleSend = async () => {
     if (!selectedSmtp) {
