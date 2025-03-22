@@ -60,15 +60,13 @@ export const updateSmtpConfig = async (req, res) => {
   const { title, host, port, secure, username, pass } = req.body;
 
   try {
-    const hashedPass = pass ? await bcrypt.hash(pass, 10) : undefined;
-
     const result = await pool.query(
       `UPDATE smtp_config 
       SET title = $1, host = $2, port = $3, secure = $4, username = $5, 
           pass = $6
       WHERE id = $7
       RETURNING *`,
-      [title, host, port, secure, username, hashedPass, req.params.id]
+      [title, host, port, secure, username, pass, req.params.id]
     );
 
     if (!result.rows.length) {
