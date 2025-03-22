@@ -11,7 +11,6 @@ const defaultConfig = {
 };
 
 const SMTPConfigForm = ({ initialConfig, onUpdate, onSave, loading }) => {
-  // Define o estado inicial: se houver uma config existente (atualização) usa-a, caso contrário, usa o defaultConfig
   const initialState =
     initialConfig && initialConfig.id ? initialConfig : defaultConfig;
   const [config, setConfig] = useState(initialState);
@@ -19,7 +18,6 @@ const SMTPConfigForm = ({ initialConfig, onUpdate, onSave, loading }) => {
     initialState.secure?.toUpperCase() === 'SSL' ? 'ssl' : 'tls'
   );
 
-  // Atualiza o estado quando initialConfig mudar
   useEffect(() => {
     const newState =
       initialConfig && initialConfig.id ? initialConfig : defaultConfig;

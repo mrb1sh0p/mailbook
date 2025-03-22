@@ -88,6 +88,15 @@ export const useSMTP = () => {
     }
   };
 
+  const selectSMTP = (id) => {
+    if (!id) {
+      setSelectedSmtp(null);
+      return;
+    }
+    const config = smtpList.find((c) => c.id.toString() === id.toString());
+    setSelectedSmtp(config || null);
+  };
+
   useEffect(() => {
     fetchSMTP();
   }, [fetchSMTP]);
@@ -97,7 +106,7 @@ export const useSMTP = () => {
     selectedSmtp,
     loading,
     error,
-    selectSMTP: setSelectedSmtp,
+    selectSMTP,
     saveSMTP,
     updateSMTP,
     deleteSMTP,
