@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Navigate } from 'react-router';
+import { Navigate, Link } from 'react-router';
 
 const LoginPage = () => {
   const { overlord, loginOverlord } = useAuth();
@@ -32,6 +32,9 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="absolute top-4 right-4">
+        <Link to="/login">Acesso Comum</Link>
+      </div>
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-3 text-center text-3xl font-extrabold text-gray-900">
           Bem-Vindo Overlord
