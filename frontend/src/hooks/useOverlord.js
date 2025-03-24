@@ -110,9 +110,12 @@ export const useOverlord = () => {
   const updateRoleUserInOrg = async (orgId, userId, role) => {
     try {
       setLoading(true);
-      const { data } = await axios.put(`/api/v1/org/${orgId}/users/${userId}`, {
-        role,
-      });
+      const { data } = await axios.put(
+        `/api/v1/orgs/${orgId}/users/${userId}`,
+        {
+          role,
+        }
+      );
       return data;
     } catch (err) {
       console.error('Erro ao atualizar papel do usuário na organização:', err);
@@ -129,7 +132,6 @@ export const useOverlord = () => {
   const getUsersByOrg = async (orgId) => {
     try {
       const { data } = await axios.get(`/api/v1/org/${orgId}/users`);
-      console.log(data);
       return data;
     } catch (error) {
       console.error('Erro ao buscar usuários da organização:', error);

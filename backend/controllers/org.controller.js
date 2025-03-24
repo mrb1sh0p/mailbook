@@ -2,10 +2,10 @@ import { pool } from '../db.js';
 
 export const addUserToOrg = async (req, res) => {
   try {
-    const { id, orgId } = req.params;
+    const { id, userId } = req.params;
     await pool.query(
       'INSERT INTO user_is_orgs (user_id, org_id) VALUES ($1, $2)',
-      [id, orgId]
+      [userId, id]
     );
     return res.status(204).json();
   } catch (error) {

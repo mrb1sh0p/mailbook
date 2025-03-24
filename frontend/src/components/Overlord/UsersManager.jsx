@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { useOverlord } from '../../hooks/useOverlord';
 import FeedbackMessage from '../UI/FeedbackMessage';
 import NewUserForms from './NewUserForms';
@@ -8,6 +9,7 @@ const UsersManager = () => {
   const [selectedOrgId, setSelectedOrgId] = useState('');
   const [message, setMessage] = useState('');
   const [users, setUsers] = useState([]);
+  const [showAddUser, setShowAddUser] = useState(true);
 
   useEffect(() => {
     if (selectedOrgId) {
@@ -20,6 +22,8 @@ const UsersManager = () => {
     const orgUsers = await getUsersByOrg(orgId);
     setUsers(orgUsers || []);
   };
+
+  const toggleShowAddUser = () => setShowAddUser((prev) => !prev);
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
@@ -46,14 +50,36 @@ const UsersManager = () => {
         </select>
       </div>
 
+      <div
+        className="flex items-center justify-between cursor-pointer mb-4"
+        onClick={toggleShowAddUser}
+      >
+        <h2 className="text-2xl font-bold text-gray-800">Novo usuário</h2>
+        {showAddUser ? (
+          <FaChevronUp className="h-6 w-6 text-gray-600" />
+        ) : (
+          <FaChevronDown className="h-6 w-6 text-gray-600" />
+        )}
+      </div>
+      {showAddUser && (
+        <div className="mt-6">
+          <NewUserForms
+            setMessage={setMessage}
+            selectedOrgId={selectedOrgId}
+            fetchUsers={fetchUsers}
+          />
+        </div>
+      )}
+
       {selectedOrgId && (
         <div className="mb-6">
           <h3 className="text-lg font-bold mb-2">Usuários da Organização</h3>
           {users.length > 0 ? (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto mb-4">
               <table className="min-w-full border rounded-lg">
                 <thead className="bg-gray-200">
                   <tr>
+                    <th className="p-3 text-left">Nome</th>
                     <th className="p-3 text-left">E-mail</th>
                     <th className="p-3 text-left">Papel</th>
                     <th className="p-3 text-left">Ações</th>
@@ -61,7 +87,11 @@ const UsersManager = () => {
                 </thead>
                 <tbody>
                   {users.map((user) => (
-                    <tr key={user.id} className="border-b hover:bg-gray-100">
+                    <tr
+                      key={user.id}
+                      className="border-b hover:bg-gray-100 mb-2"
+                    >
+                      <td className="p-3">{user.name}</td>
                       <td className="p-3">{user.email}</td>
                       <td className="p-3">{user.role}</td>
                       <td className="p-3 flex gap-2">
@@ -80,11 +110,6 @@ const UsersManager = () => {
           ) : (
             <p className="mb-4">Nenhum usuário cadastrado nesta organização.</p>
           )}
-          <NewUserForms
-            setMessage={setMessage}
-            selectedOrgId={selectedOrgId}
-            fetchUsers={fetchUsers}
-          />
         </div>
       )}
     </div>

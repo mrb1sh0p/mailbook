@@ -51,5 +51,16 @@ export const useUser = () => {
     }
   };
 
-  return { getDataUser, createUser, selectUserByCpf, loading };
+  const deleteUser = async (id) => {
+    try {
+      setLoading(true);
+      await axios.delete(`/api/v1/users/${id}`);
+    } catch (error) {
+      console.error('Erro ao deletar usuário:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { getDataUser, deleteUser, createUser, selectUserByCpf, loading };
 };

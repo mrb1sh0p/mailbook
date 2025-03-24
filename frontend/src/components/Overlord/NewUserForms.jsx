@@ -5,7 +5,7 @@ import { useOverlord } from '../../hooks/useOverlord';
 import InputFormsUsers from './InputFormsUsers';
 import { useUser } from '../../hooks/useUser';
 
-const NewUserForms = (setMessage, selectedOrgId, fetchUsers) => {
+const NewUserForms = ({ setMessage, selectedOrgId, fetchUsers }) => {
   const [enable, setEnable] = useState(false);
   const [error, setError] = useState(null);
   const [newUser, setNewUser] = useState(false);
@@ -20,24 +20,38 @@ const NewUserForms = (setMessage, selectedOrgId, fetchUsers) => {
     role: '' || 'user',
   });
 
-  const { addUserToOrg, loading } = useOverlord();
-  const { createUser, selectUserByCpf, loading: load } = useUser();
+  const { addUserToOrg, updateRoleUserInOrg, loading } = useOverlord();
+  const { createUser, selectUserByCpf, deleteUser, loading: load } = useUser();
   const [cpfDebounce, setCpfDebounce] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (newUser) {
       try {
-        const data = await createUser({
-          ...user,
-          role: 'user',
-        });
-        await addUserToOrg(selectedOrgId, data.id, user.role);
+        const res = await createUser({ ...user, role: 'user' });
+        try {
+          await addUserToOrg(selectedOrgId, res.id);
+          await updateRoleUserInOrg(res.id, selectedOrgId, user.role);
+          setMessage('Usuário adicionado com sucesso');
+        } catch (orgError) {
+          await deleteUser(res.id);
+          setError(
+            orgError.response?.data?.error ||
+              'Erro ao adicionar usuário na organização'
+          );
+          return;
+        }
         fetchUsers();
-      } catch (error) {}
+      } catch (userError) {
+        setError(
+          userError.response?.data?.error || 'Erro ao adicionar usuário'
+        );
+      }
     } else {
-      // TODO: criar atualização do usuario
+      // TODO: implementar atualização do usuário
     }
+
     setError(null);
   };
 
@@ -80,7 +94,7 @@ const NewUserForms = (setMessage, selectedOrgId, fetchUsers) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-gray-100 p-4 rounded-lg shadow-sm "
+      className="bg-gray-100 p-4 rounded-lg shadow-sm mb-4"
     >
       {error && <FeedbackMessage type="error" message={error} />}
       <h3 className="text-lg font-bold mb-4">Adicionar Usuário</h3>
