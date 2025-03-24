@@ -5,6 +5,7 @@ import {
   getUserById,
   updateUser,
   deleteUser,
+  getUserByCpf,
   getUsers,
 } from '../controllers/user.controller.js';
 
@@ -32,6 +33,7 @@ router.get('/users', requireSuperAdmin, getUsers);
 router.use(requireOrgAdmin);
 router.get('/users', getUsersByOrg);
 router.get('/users/:id', getUserById);
+router.get('/users/cpf/:cpf', getUserByCpf);
 router.post('/users', createUser);
 router.put('/users/:id', updateUser);
 router.delete('/users/:id', deleteUser);

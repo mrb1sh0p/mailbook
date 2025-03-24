@@ -27,5 +27,29 @@ export const useUser = () => {
     }
   };
 
-  return { getDataUser, loading };
+  const selectUserByCpf = async (cpf) => {
+    try {
+      setLoading(true);
+      const { data } = await axios.get(`/api/v1/users/cpf/${cpf}`);
+      return data;
+    } catch (error) {
+      console.error('Erro ao buscar usuário:', error);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createUser = async (user) => {
+    try {
+      setLoading(true);
+      const { data } = await axios.post('/api/v1/users', user);
+      return data;
+    } catch (error) {
+      console.error('Erro ao criar usuário:', error);
+      return null;
+    }
+  };
+
+  return { getDataUser, createUser, selectUserByCpf, loading };
 };

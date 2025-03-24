@@ -1,3 +1,5 @@
+-- CREATE DATABASE mydatabase CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
 CREATE TYPE user_role AS ENUM ('overlord', 'user');
 
 CREATE TYPE user_role_is_orgs AS ENUM ('admin', 'user');
@@ -26,8 +28,10 @@ CREATE TABLE
   users (
     id uuid NOT NULL DEFAULT gen_random_uuid () CONSTRAINT pk_users PRIMARY KEY,
     name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    username TEXT NOT NULL,
+    cpf TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    username TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
     role user_role NOT NULL CONSTRAINT df_users_role DEFAULT 'user',
     utc_created_on TIMESTAMP NOT NULL CONSTRAINT df_users_utc_created_on DEFAULT now ()

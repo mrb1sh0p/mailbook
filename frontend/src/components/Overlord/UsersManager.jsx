@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useOverlord } from '../../hooks/useOverlord';
 import FeedbackMessage from '../UI/FeedbackMessage';
-import Button from '../UI/Button';
+import NewUserForms from './NewUserForms';
 
 const UsersManager = () => {
-  const { orgs, addUserToOrg, getUsersByOrg, loading, error } = useOverlord();
+  const { orgs, getUsersByOrg, error } = useOverlord();
   const [selectedOrgId, setSelectedOrgId] = useState('');
-  const [userEmail, setUserEmail] = useState('');
-  const [role, setRole] = useState('user');
   const [message, setMessage] = useState('');
   const [users, setUsers] = useState([]);
 
@@ -15,28 +13,12 @@ const UsersManager = () => {
     if (selectedOrgId) {
       fetchUsers(selectedOrgId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedOrgId]);
 
   const fetchUsers = async (orgId) => {
     const orgUsers = await getUsersByOrg(orgId);
     setUsers(orgUsers || []);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!selectedOrgId || !userEmail) {
-      setMessage('Preencha todos os campos.');
-      return;
-    }
-    const result = await addUserToOrg(selectedOrgId, userEmail, role);
-    if (result) {
-      setMessage('Usuário adicionado com sucesso.');
-      setUserEmail('');
-      setRole('user');
-      fetchUsers(selectedOrgId);
-    } else {
-      setMessage('Falha ao adicionar usuário.');
-    }
   };
 
   return (
@@ -96,43 +78,15 @@ const UsersManager = () => {
               </table>
             </div>
           ) : (
-            <p>Nenhum usuário cadastrado nesta organização.</p>
+            <p className="mb-4">Nenhum usuário cadastrado nesta organização.</p>
           )}
-        </div>
-      )}
-
-      <form
-        onSubmit={handleSubmit}
-        className="bg-gray-100 p-4 rounded-lg shadow-sm"
-      >
-        <h3 className="text-lg font-bold mb-4">Adicionar Usuário</h3>
-        <div className="mb-4">
-          <label className="block mb-1 font-medium">E-mail do Usuário:</label>
-          <input
-            type="email"
-            value={userEmail}
-            onChange={(e) => setUserEmail(e.target.value)}
-            className="w-full p-2 border rounded-lg"
-            required
+          <NewUserForms
+            setMessage={setMessage}
+            selectedOrgId={selectedOrgId}
+            fetchUsers={fetchUsers}
           />
         </div>
-
-        <div className="mb-4">
-          <label className="block mb-1 font-medium">Papel:</label>
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="w-full p-2 border rounded-lg"
-          >
-            <option value="user">Usuário</option>
-            <option value="admin">Administrador</option>
-          </select>
-        </div>
-
-        <Button type="submit" variant="primary" loading={loading}>
-          Adicionar Usuário
-        </Button>
-      </form>
+      )}
     </div>
   );
 };

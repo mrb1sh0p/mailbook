@@ -21,14 +21,30 @@ export const getUserById = async (req, res) => {
   }
 };
 
+export const getUserByCpf = async (req, res) => {
+  try {
+    const { cpf } = req.params;
+    const { rows } = await pool.query('SELECT * FROM users WHERE cpf = $1', [
+      cpf,
+    ]);
+    return res.status(200).json(rows[0]);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export const createUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, last_name, email, password, username, cpf, role } = req.body;
     const { rows } = await pool.query(
-      'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
-      [name, email, password]
+      `INSERT INTO users (name, email, password, username, cpf, role, last_name) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+      [name, email, password, username, cpf, role, last_name]
     );
-    return res.status(201).json(rows[0]);
+    return res.status(201).json({
+      ...rows[0],
+      password: undefined,
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

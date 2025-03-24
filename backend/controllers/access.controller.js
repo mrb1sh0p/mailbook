@@ -22,7 +22,6 @@ export const LoginOverlord = async (req, res) => {
         },
       });
     }
-
     if (result.rows[0].role !== 'overlord') {
       return res.status(401).json({
         error: {
