@@ -27,7 +27,10 @@ const TableUser = ({ users, setMessage, fetchUsers }) => {
                 <button
                   onClick={async () => {
                     await deleteUser(user.id);
-                    setMessage('Usuário removido com sucesso');
+                    setMessage({
+                      message: 'Usuário removido com sucesso',
+                      type: 'success',
+                    });
                     await fetchUsers();
                   }}
                   className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"

@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaTimes } from 'react-icons/fa';
 import { useOverlord } from '../../hooks/useOverlord';
 import TableUser from './TableUser';
-import FeedbackMessage from '../UI/FeedbackMessage';
 import NewUserForms from './NewUserForms';
 
 const UsersManager = () => {
-  const { orgs, getUsersByOrg, error } = useOverlord();
+  const { orgs, getUsersByOrg } = useOverlord();
   const [selectedOrgId, setSelectedOrgId] = useState('');
-  const [message, setMessage] = useState('');
   const [users, setUsers] = useState([]);
   const [showAddUser, setShowAddUser] = useState(true);
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     if (selectedOrgId) {
@@ -26,11 +25,30 @@ const UsersManager = () => {
 
   const toggleShowAddUser = () => setShowAddUser((prev) => !prev);
 
+  const closeMessage = () => setMessage(null);
+
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">Gerenciar Usuários</h2>
-      {error && <FeedbackMessage type="error" message={error} />}
-      {message && <p className="mb-4 text-green-600">{message}</p>}
+
+      {message && (
+        <div
+          className={`mb-4 p-3 rounded-lg flex justify-between items-center 
+            ${
+              message.type === 'error'
+                ? 'bg-red-100 text-red-700'
+                : 'bg-green-100 text-green-700'
+            }`}
+        >
+          <p>{message.message}</p>
+          <button
+            onClick={closeMessage}
+            className="text-gray-500 hover:text-gray-800"
+          >
+            <FaTimes />
+          </button>
+        </div>
+      )}
 
       <div className="mb-4">
         <label className="block mb-2 font-medium">
@@ -62,6 +80,7 @@ const UsersManager = () => {
           <FaChevronDown className="h-6 w-6 text-gray-600" />
         )}
       </div>
+
       {showAddUser && (
         <div className="mt-6">
           <NewUserForms
@@ -79,12 +98,12 @@ const UsersManager = () => {
             <TableUser
               users={users}
               setMessage={setMessage}
-              fetchUsers={() => {
-                fetchUsers(selectedOrgId);
-              }}
+              fetchUsers={() => fetchUsers(selectedOrgId)}
             />
           ) : (
-            <p className="mb-4">Nenhum usuário cadastrado nesta organização.</p>
+            <p className="mb-4 text-gray-600">
+              Nenhum usuário cadastrado nesta organização.
+            </p>
           )}
         </div>
       )}

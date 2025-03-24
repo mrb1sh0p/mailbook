@@ -36,7 +36,10 @@ const NewUserForms = ({ setMessage, selectedOrgId, fetchUsers }) => {
         try {
           await addUserToOrg(selectedOrgId, res.id);
           await updateRoleUserInOrg(res.id, selectedOrgId, user.role);
-          setMessage('Usuário adicionado com sucesso');
+          setMessage({
+            message: 'Usuário adicionado com sucesso',
+            type: 'success',
+          });
           setUser({
             id: '',
             name: '',
@@ -50,17 +53,20 @@ const NewUserForms = ({ setMessage, selectedOrgId, fetchUsers }) => {
           setNewUser(false);
         } catch (orgError) {
           await deleteUser(res.id);
-          setMessage(
-            orgError.response?.data?.error ||
-              'Erro ao adicionar usuário na organização'
-          );
+          setMessage({
+            message:
+              orgError.response?.data?.error || 'Erro ao adicionar usuário',
+            type: 'error',
+          });
           return;
         }
         await fetchUsers(selectedOrgId);
       } catch (userError) {
-        setMessage(
-          userError.response?.data?.error || 'Erro ao adicionar usuário'
-        );
+        setMessage({
+          message:
+            userError.response?.data?.error || 'Erro ao adicionar usuário',
+          type: 'error',
+        });
       }
     } else {
       try {
@@ -68,9 +74,11 @@ const NewUserForms = ({ setMessage, selectedOrgId, fetchUsers }) => {
         setMessage('Usuário atualizado com sucesso');
         await fetchUsers(selectedOrgId);
       } catch (updateError) {
-        setMessage(
-          updateError.response?.data?.error || 'Erro ao atualizar usuário'
-        );
+        setMessage({
+          message:
+            updateError.response?.data?.error || 'Erro ao atualizar usuário',
+          type: 'error',
+        });
       }
     }
   };
@@ -87,7 +95,10 @@ const NewUserForms = ({ setMessage, selectedOrgId, fetchUsers }) => {
       }
     } catch (err) {
       console.error('Erro ao buscar usuário por CPF:', err);
-      setMessage('Erro ao buscar usuário por CPF');
+      setMessage({
+        message: 'Erro ao buscar usuário por CPF',
+        type: 'error',
+      });
     }
   };
 
@@ -111,7 +122,10 @@ const NewUserForms = ({ setMessage, selectedOrgId, fetchUsers }) => {
           cpf: '',
           role: 'user',
         });
-        setMessage('CPF deve conter 11 dígitos');
+        setMessage({
+          message: 'CPF deve conter 11 dígitos',
+          type: 'error',
+        });
       }
     }, 500);
     setCpfDebounce(timeout);
