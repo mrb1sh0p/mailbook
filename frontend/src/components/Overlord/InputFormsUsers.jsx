@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
-const InputFormsUsers = ({
-  value,
-  user,
-  enable,
-  type,
-  setValue,
-  label,
-  name,
-}) => {
+const InputFormsUsers = ({ value, user, type, setValue, label, name }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleUserChange = (e) => {
@@ -29,7 +21,6 @@ const InputFormsUsers = ({
       <label className="block mb-1 font-medium">{label}</label>
       <input
         name={name}
-        disabled={!enable}
         type={inputType}
         value={value}
         onChange={handleUserChange}

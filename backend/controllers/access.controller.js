@@ -104,11 +104,11 @@ export const getUserData = async (req, res) => {
 
   try {
     const { rows } = await pool.query(
-      `SELECT users.email, user_is_orgs.role, orgs.name
-      FROM users
-      JOIN user_is_orgs ON users.id = user_is_orgs.user_id
-      JOIN orgs ON user_is_orgs.org_id = orgs.id
-      WHERE users.id = $1`,
+      `SELECT u.email, uo.role, o.name, u.email, u.id, u.name
+      FROM users u
+      JOIN user_is_orgs uo ON u.id = uo.user_id
+      JOIN orgs o ON uo.org_id = o.id
+      WHERE u.id = $1`,
       [id]
     );
 

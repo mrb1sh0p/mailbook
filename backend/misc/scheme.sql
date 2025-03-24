@@ -28,10 +28,10 @@ CREATE TABLE
   users (
     id uuid NOT NULL DEFAULT gen_random_uuid () CONSTRAINT pk_users PRIMARY KEY,
     name TEXT NOT NULL,
-    cpf TEXT NOT NULL,
+    cpf TEXT NOT NULL UNIQUE CONSTRAINT uniqeu_cpf_users CHECK (cpf ~ '^[0-9]{3}.[0-9]{3}.[0-9]{3}-[0-9]{2}$'),
     last_name TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE,
-    username TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE CONSTRAINT unique_email_users CHECK (email ~ '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'),
+    username TEXT NOT NULL UNIQUE CONSTRAINT unique_username_users,
     password TEXT NOT NULL,
     role user_role NOT NULL CONSTRAINT df_users_role DEFAULT 'user',
     utc_created_on TIMESTAMP NOT NULL CONSTRAINT df_users_utc_created_on DEFAULT now ()

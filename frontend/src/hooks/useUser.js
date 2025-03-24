@@ -51,6 +51,17 @@ export const useUser = () => {
     }
   };
 
+  const updateUser = async (user) => {
+    try {
+      setLoading(true);
+      await axios.put(`/api/v1/users/${user.id}`, user);
+    } catch (error) {
+      console.error('Erro ao atualizar usuário:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const deleteUser = async (id) => {
     try {
       setLoading(true);
@@ -62,5 +73,12 @@ export const useUser = () => {
     }
   };
 
-  return { getDataUser, deleteUser, createUser, selectUserByCpf, loading };
+  return {
+    getDataUser,
+    deleteUser,
+    updateUser,
+    createUser,
+    selectUserByCpf,
+    loading,
+  };
 };

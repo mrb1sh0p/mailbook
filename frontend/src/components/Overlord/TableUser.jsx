@@ -1,6 +1,6 @@
 import { useUser } from '../../hooks/useUser';
 
-const TableUser = ({ users, setMessage }) => {
+const TableUser = ({ users, setMessage, fetchUsers }) => {
   const { deleteUser } = useUser();
 
   return (
@@ -28,6 +28,7 @@ const TableUser = ({ users, setMessage }) => {
                   onClick={async () => {
                     await deleteUser(user.id);
                     setMessage('Usuário removido com sucesso');
+                    await fetchUsers();
                   }}
                   className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                 >

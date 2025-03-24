@@ -57,7 +57,12 @@ export const getUsersByOrg = async (req, res) => {
   try {
     const { id } = req.params;
     const { rows } = await pool.query(
-      'SELECT users.* FROM users JOIN user_is_orgs ON users.id = user_is_orgs.user_id WHERE user_is_orgs.org_id = $1',
+      `SELECT users.id, users.name, users.last_name, users.username, 
+      users.email, users.password, users.cpf, user_is_orgs.role 
+      FROM users
+      JOIN user_is_orgs 
+      ON users.id = user_is_orgs.user_id 
+      WHERE user_is_orgs.org_id = $1`,
       [id]
     );
     return res.status(200).json(rows);

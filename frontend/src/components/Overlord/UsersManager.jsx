@@ -76,7 +76,13 @@ const UsersManager = () => {
         <div className="mb-6">
           <h3 className="text-lg font-bold mb-2">Usuários da Organização</h3>
           {users.length > 0 ? (
-            <TableUser users={users} setMessage={setMessage} />
+            <TableUser
+              users={users}
+              setMessage={setMessage}
+              fetchUsers={() => {
+                fetchUsers(selectedOrgId);
+              }}
+            />
           ) : (
             <p className="mb-4">Nenhum usuário cadastrado nesta organização.</p>
           )}
