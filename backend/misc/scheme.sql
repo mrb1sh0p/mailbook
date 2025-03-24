@@ -25,7 +25,9 @@ CREATE TABLE
 CREATE TABLE
   users (
     id uuid NOT NULL DEFAULT gen_random_uuid () CONSTRAINT pk_users PRIMARY KEY,
+    name TEXT NOT NULL,
     email TEXT NOT NULL,
+    username TEXT NOT NULL,
     password TEXT NOT NULL,
     role user_role NOT NULL CONSTRAINT df_users_role DEFAULT 'user',
     utc_created_on TIMESTAMP NOT NULL CONSTRAINT df_users_utc_created_on DEFAULT now ()
@@ -47,7 +49,7 @@ CREATE TABLE
     org_id uuid NOT NULL,
     role user_role_is_orgs NOT NULL CONSTRAINT df_user_is_orgs_role DEFAULT 'user',
     utc_created_on TIMESTAMP NOT NULL CONSTRAINT df_user_is_orgs_utc_created_on DEFAULT now (),
-    CONSTRAINT fk_user_is_orgs_user_id FOREIGN KEY (user_id) REFERENCES users (id),
+    CONSTRAINT fk_user_is_orgs_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     CONSTRAINT fk_user_is_orgs_org_id FOREIGN KEY (org_id) REFERENCES orgs (id)
   );
 
