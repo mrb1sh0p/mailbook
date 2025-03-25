@@ -1,6 +1,7 @@
 {
   "name": "mass-email-app",
   "version": "1.0.0",
+  "author": "João Gustavo Soares Bispo",
   "scripts": {
     "dev": "run-p dev:backend dev:frontend",
     "dev:backend": "cd backend && cross-env NODE_ENV=development PORT=5000 nodemon --experimental-modules index.js",

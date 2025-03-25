@@ -7,7 +7,7 @@
     "dev": "nodemon index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "João Gustavo Soares Bispo",
   "license": "ISC",
   "description": "",
   "dependencies": {
