@@ -1,88 +1,77 @@
--- CREATE DATABASE mydatabase CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-
 CREATE TYPE user_role AS ENUM ('overlord', 'user');
 
 CREATE TYPE user_role_is_orgs AS ENUM ('admin', 'user');
 
-CREATE TABLE
-  orgs (
-    id uuid NOT NULL DEFAULT gen_random_uuid () CONSTRAINT pk_orgs PRIMARY KEY,
+CREATE TABLE orgs (
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
     name TEXT NOT NULL,
-    utc_created_on TIMESTAMP NOT NULL CONSTRAINT df_orgs_utc_created_on DEFAULT now ()
-  );
+    address TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE CHECK (email ~ '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'),
+    cnpj TEXT CHECK (cnpj ~ '^[0-9]{14}$'),
+    utc_created_on TIMESTAMP NOT NULL DEFAULT now()
+);
 
-CREATE TABLE
-  smtp_config (
-    id uuid NOT NULL DEFAULT gen_random_uuid () CONSTRAINT pk_smtp PRIMARY KEY,
+CREATE TABLE smtp_config (
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
     title TEXT NOT NULL,
     host TEXT NOT NULL,
     port INTEGER NOT NULL,
-    secure TEXT NOT NULL,
+    secure BOOLEAN NOT NULL,
     username TEXT NOT NULL,
     pass TEXT NOT NULL,
-    org_id uuid NOT NULL CONSTRAINT fk_smtp_org_id REFERENCES orgs (id),
-    utc_created_on TIMESTAMP NOT NULL CONSTRAINT df_smtp_utc_created_on DEFAULT now ()
-  );
+    org_id UUID NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+    utc_created_on TIMESTAMP NOT NULL DEFAULT now()
+);
 
-CREATE TABLE
-  users (
-    id uuid NOT NULL DEFAULT gen_random_uuid () CONSTRAINT pk_users PRIMARY KEY,
+CREATE TABLE users (
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
     name TEXT NOT NULL,
-    cpf TEXT NOT NULL UNIQUE CONSTRAINT uniqeu_cpf_users CHECK (cpf ~ '^[0-9]{3}.[0-9]{3}.[0-9]{3}-[0-9]{2}$'),
+    cpf TEXT NOT NULL UNIQUE CHECK (cpf ~ '^[0-9]{11}$'),
     last_name TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE CONSTRAINT unique_email_users CHECK (email ~ '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'),
-    username TEXT NOT NULL UNIQUE CONSTRAINT unique_username_users,
+    email TEXT NOT NULL UNIQUE CHECK (email ~ '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'),
+    username TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
-    role user_role NOT NULL CONSTRAINT df_users_role DEFAULT 'user',
-    utc_created_on TIMESTAMP NOT NULL CONSTRAINT df_users_utc_created_on DEFAULT now ()
-  );
+    role user_role NOT NULL DEFAULT 'user',
+    utc_created_on TIMESTAMP NOT NULL DEFAULT now()
+);
 
-CREATE TABLE
-  email_model (
-    id uuid NOT NULL DEFAULT gen_random_uuid () CONSTRAINT pk_email_model PRIMARY KEY,
+CREATE TABLE email_model (
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
     title TEXT NOT NULL,
     content TEXT NOT NULL,
-    utc_created_on TIMESTAMP NOT NULL CONSTRAINT df_email_model_utc_created_on DEFAULT now (),
-    org_id uuid NOT NULL CONSTRAINT fk_email_model_org_id REFERENCES orgs (id)
-  );
+    org_id UUID NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+    utc_created_on TIMESTAMP NOT NULL DEFAULT now()
+);
 
-CREATE TABLE
-  user_is_orgs (
-    id uuid NOT NULL DEFAULT gen_random_uuid () CONSTRAINT pk_user_is_orgs PRIMARY KEY,
-    user_id uuid NOT NULL,
-    org_id uuid NOT NULL,
-    role user_role_is_orgs NOT NULL CONSTRAINT df_user_is_orgs_role DEFAULT 'user',
-    utc_created_on TIMESTAMP NOT NULL CONSTRAINT df_user_is_orgs_utc_created_on DEFAULT now (),
-    CONSTRAINT fk_user_is_orgs_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    CONSTRAINT fk_user_is_orgs_org_id FOREIGN KEY (org_id) REFERENCES orgs (id)
-  );
+CREATE TABLE user_is_orgs (
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    org_id UUID NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+    role user_role_is_orgs NOT NULL DEFAULT 'user',
+    utc_created_on TIMESTAMP NOT NULL DEFAULT now()
+);
 
-CREATE TABLE
-  mails (
-    id uuid NOT NULL DEFAULT gen_random_uuid () CONSTRAINT pk_mails PRIMARY KEY,
-    org_id uuid NOT NULL,
+CREATE TABLE mails (
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+    org_id UUID NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
     subject TEXT NOT NULL,
     body TEXT NOT NULL,
-    utc_created_on TIMESTAMP NOT NULL CONSTRAINT df_mails_utc_created_on DEFAULT now (),
-    CONSTRAINT fk_mails_org_id FOREIGN KEY (org_id) REFERENCES orgs (id)
-  );
+    utc_created_on TIMESTAMP NOT NULL DEFAULT now()
+);
 
-CREATE TABLE
-  mail_attachments (
-    id uuid NOT NULL DEFAULT gen_random_uuid () CONSTRAINT pk_mail_attachments PRIMARY KEY,
-    mail_id uuid NOT NULL,
+CREATE TABLE mail_attachments (
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+    mail_id UUID NOT NULL REFERENCES mails(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
     path TEXT NOT NULL,
-    utc_created_on TIMESTAMP NOT NULL CONSTRAINT df_mail_attachments_utc_created_on DEFAULT now (),
-    CONSTRAINT fk_mail_attachments_mail_id FOREIGN KEY (mail_id) REFERENCES mails (id)
-  );
+    utc_created_on TIMESTAMP NOT NULL DEFAULT now()
+);
 
-CREATE TABLE
-  events (
-    id uuid NOT NULL DEFAULT gen_random_uuid () CONSTRAINT pk_events PRIMARY KEY,
-    org_id uuid NOT NULL,
+CREATE TABLE events (
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+    org_id UUID NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
     description TEXT NOT NULL,
-    utc_created_on TIMESTAMP NOT NULL CONSTRAINT df_events_utc_created_on DEFAULT now (),
-    CONSTRAINT fk_events_org_id FOREIGN KEY (org_id) REFERENCES orgs (id)
-  );
+    utc_created_on TIMESTAMP NOT NULL DEFAULT now()
+);
