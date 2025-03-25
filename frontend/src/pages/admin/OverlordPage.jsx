@@ -60,7 +60,6 @@ const OverlordPage = () => {
         </button>
       </aside>
 
-      {/* Área de Conteúdo */}
       <main className="flex-1 p-8">
         <header className="mb-4">
           <h1 className="text-2xl font-bold">Página do Overlord</h1>
