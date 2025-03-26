@@ -5,31 +5,35 @@ import {
   getUserById,
   updateUser,
   deleteUser,
+  getUserByCpf,
   getUsers,
 } from '../controllers/user.controller.js';
 
+import { getOrgsByUser, getUsersByOrg } from '../controllers/org.controller.js';
 import {
-  getOrgsByUserId,
-  getUsersByOrgId,
-} from '../controllers/org.controller.js';
-import { Login, getUserData } from '../controllers/access.controller.js';
+  Login,
+  getUserData,
+  LoginOverlord,
+} from '../controllers/access.controller.js';
 import { requireOrgAdmin, requireSuperAdmin } from '../middlewares/auth.js';
 
 const router = express.Router();
 
 router.post('/login', Login);
+router.post('/login/overlord', LoginOverlord);
 
 router.use(verifyToken);
 router.get('/user', getUserById);
 router.get('/userdata', getUserData);
 router.put('/user', updateUser);
-router.get('/user/orgs', getOrgsByUserId);
+router.get('/user/orgs/:id', getOrgsByUser);
 
 router.get('/users', requireSuperAdmin, getUsers);
 
 router.use(requireOrgAdmin);
-router.get('/users', getUsersByOrgId);
+router.get('/users', getUsersByOrg);
 router.get('/users/:id', getUserById);
+router.get('/users/cpf/:cpf', getUserByCpf);
 router.post('/users', createUser);
 router.put('/users/:id', updateUser);
 router.delete('/users/:id', deleteUser);

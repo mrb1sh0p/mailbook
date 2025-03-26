@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Link, Navigate } from 'react-router';
+import { Navigate, Link } from 'react-router';
 
 const LoginPage = () => {
-  const { user, login } = useAuth();
+  const { overlord, loginOverlord } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  if (user) return <Navigate to="/app" replace />;
+  if (overlord) return <Navigate to="/overlord" replace />;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +22,7 @@ const LoginPage = () => {
 
     try {
       setIsLoading(true);
-      await login({ username, password });
+      await loginOverlord({ username, password });
     } catch (error) {
       setErrorMessage('Credenciais inválidas. Por favor, tente novamente.');
     } finally {
@@ -33,11 +33,11 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="absolute top-4 right-4">
-        <Link to="/login_overlord">Acesso Overlord</Link>
+        <Link to="/login">Acesso Comum</Link>
       </div>
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-3 text-center text-3xl font-extrabold text-gray-900">
-          Bem-Vindo ao MailBook
+          Bem-Vindo Overlord
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600 max-w">
           Entre com suas credenciais

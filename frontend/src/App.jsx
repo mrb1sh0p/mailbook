@@ -71,7 +71,7 @@ const App = () => {
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto space-y-8">
         <header className="flex justify-between items-center">
-          {loading ? (
+          {loading && !user ? (
             <div>Carregando...</div>
           ) : (
             <div>
