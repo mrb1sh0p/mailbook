@@ -6,12 +6,25 @@ import {
 export const sendEmails = async (req, res) => {
   const { emails, html, smtpConfig } = req.body;
 
+  if (!emails || emails.length === 0) {
+    return res.status(400).json({ error: 'Nenhum e-mail fornecido' });
+  }
+
   try {
     const transporter = createTransporter(smtpConfig);
     await transporter.verify();
 
     const results = await Promise.all(
       emails.map(async (emailData) => {
+        if (!emailData.to || !emailData.subject) {
+          return {
+            error:
+              'Dados de e-mail incompletos (faltando destinatário ou assunto)',
+            email: emailData?.to,
+            subject: emailData?.subject,
+          };
+        }
+
         try {
           return await sendSingleEmail(
             transporter,

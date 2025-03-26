@@ -34,10 +34,10 @@ export function AuthProvider({ children }) {
 
   const login = async (credentials) => {
     try {
-      const { email, password } = credentials;
+      const { username, password } = credentials;
 
       const { data } = await axios.post('/api/v1/login', {
-        email,
+        username,
         password,
       });
 
@@ -53,14 +53,12 @@ export function AuthProvider({ children }) {
 
   const loginOverlord = async (credentials) => {
     try {
-      const { email, password } = credentials;
+      const { username, password } = credentials;
 
       const { data } = await axios.post('/api/v1/login/overlord', {
-        email,
+        username,
         password,
       });
-
-      console.log(data);
 
       if (data.token) {
         localStorage.setItem('overlordToken', data.token);

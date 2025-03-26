@@ -4,13 +4,15 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "knex": "node ./node_modules/knex/bin/cli.js --knexfile configs/knexfile.js --migrations-directory ../migrations"
   },
   "keywords": [],
   "author": "João Gustavo Soares Bispo",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
