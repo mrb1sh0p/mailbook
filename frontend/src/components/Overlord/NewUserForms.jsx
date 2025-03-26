@@ -4,7 +4,12 @@ import { useOverlord } from '../../hooks/useOverlord';
 import InputFormsUsers from './InputFormsUsers';
 import { useUser } from '../../hooks/useUser';
 
-const NewUserForms = ({ setMessage, selectedOrgId, fetchUsers }) => {
+const NewUserForms = ({
+  setMessage,
+  setShowAddUser,
+  selectedOrgId,
+  fetchUsers,
+}) => {
   const [newUser, setNewUser] = useState(false);
   const [user, setUser] = useState({
     id: '',
@@ -17,7 +22,8 @@ const NewUserForms = ({ setMessage, selectedOrgId, fetchUsers }) => {
     role: '' || 'user',
   });
 
-  const { addUserToOrg, updateRoleUserInOrg, loading } = useOverlord();
+  const { addUserToOrg, updateRoleUserInOrg, getUsersByOrg, loading } =
+    useOverlord();
   const {
     createUser,
     updateUser,
@@ -71,8 +77,30 @@ const NewUserForms = ({ setMessage, selectedOrgId, fetchUsers }) => {
     } else {
       try {
         await updateUser(user);
-        setMessage('Usuário atualizado com sucesso');
+        setMessage({
+          message: 'Usuário atualizado com sucesso',
+          type: 'success',
+        });
+
+        const userInOrg = await getUsersByOrg(selectedOrgId);
+
+        if (!userInOrg.find((u) => u.id === user.id)) {
+          await addUserToOrg(selectedOrgId, user.id);
+          await updateRoleUserInOrg(user.id, selectedOrgId, user.role);
+        }
+
         await fetchUsers(selectedOrgId);
+
+        setUser({
+          id: '',
+          name: '',
+          last_name: '',
+          username: '',
+          email: '',
+          password: '',
+          cpf: '',
+          role: 'user',
+        });
       } catch (updateError) {
         setMessage({
           message:
@@ -81,6 +109,7 @@ const NewUserForms = ({ setMessage, selectedOrgId, fetchUsers }) => {
         });
       }
     }
+    setShowAddUser(false);
   };
 
   const fetchUserByCpf = async (cpfValue) => {
@@ -127,7 +156,7 @@ const NewUserForms = ({ setMessage, selectedOrgId, fetchUsers }) => {
           type: 'error',
         });
       }
-    }, 500);
+    }, 1000);
     setCpfDebounce(timeout);
   };
 

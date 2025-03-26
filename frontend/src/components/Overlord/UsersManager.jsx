@@ -8,7 +8,7 @@ const UsersManager = () => {
   const { orgs, getUsersByOrg } = useOverlord();
   const [selectedOrgId, setSelectedOrgId] = useState('');
   const [users, setUsers] = useState([]);
-  const [showAddUser, setShowAddUser] = useState(true);
+  const [showAddUser, setShowAddUser] = useState(false);
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
@@ -87,6 +87,7 @@ const UsersManager = () => {
             setMessage={setMessage}
             selectedOrgId={selectedOrgId}
             fetchUsers={fetchUsers}
+            setShowAddUser={setShowAddUser}
           />
         </div>
       )}
@@ -97,6 +98,7 @@ const UsersManager = () => {
           {users.length > 0 ? (
             <TableUser
               users={users}
+              selectedOrgId={selectedOrgId}
               setMessage={setMessage}
               fetchUsers={() => fetchUsers(selectedOrgId)}
             />

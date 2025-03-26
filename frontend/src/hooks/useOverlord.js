@@ -28,8 +28,8 @@ export const useOverlord = () => {
   const createOrg = async (org) => {
     try {
       setLoading(true);
+      console.log('data', org);
       const { data } = await axios.post('/api/v1/orgs', org);
-      // Atualiza a lista após criar
       await fetchOrgs();
       return data;
     } catch (err) {
@@ -45,7 +45,6 @@ export const useOverlord = () => {
     try {
       setLoading(true);
       const { data } = await axios.put(`/api/v1/orgs/${org.id}`, org);
-      // Atualiza a lista após atualizar
       await fetchOrgs();
       return data;
     } catch (err) {
@@ -61,7 +60,6 @@ export const useOverlord = () => {
     try {
       setLoading(true);
       const { data } = await axios.delete(`/api/v1/orgs/${orgId}`);
-      // Atualiza a lista após deletar
       await fetchOrgs();
       return data;
     } catch (err) {

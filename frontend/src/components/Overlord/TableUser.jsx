@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useUser } from '../../hooks/useUser';
 
-const TableUser = ({ users, setMessage, fetchUsers }) => {
+const TableUser = ({ users, setMessage, fetchUsers, selectedOrgId }) => {
   const { deleteUser } = useUser();
   const [selectedUser, setSelectedUser] = useState(null);
   const [showChangePassword, setShowChangePassword] = useState(false);

@@ -1,14 +1,20 @@
+import db from '../configs/knexfile.js';
+
 export const createEmailModel = async (req, res) => {
   const { title, content } = req.body;
 
-  try {
-    const result = await pool.query(
-      `INSERT INTO email_model (title, content)
-      VALUES ($1, $2) RETURNING *`,
-      [title, content]
-    );
+  if (!title || !content) {
+    return res
+      .status(400)
+      .json({ error: 'Título e conteúdo são obrigatórios' });
+  }
 
-    return res.status(201).json(result.rows[0]);
+  try {
+    const [newModel] = await db('email_model')
+      .insert({ title, content })
+      .returning('*'); // Retorna o modelo recém-criado
+
+    return res.status(201).json(newModel);
   } catch (error) {
     console.error('Erro no banco de dados:', error);
     return res.status(500).json({
@@ -20,47 +26,54 @@ export const createEmailModel = async (req, res) => {
 
 export const getEmailModels = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM email_model ORDER BY id');
-    return res.json(result.rows);
+    const models = await db('email_model').orderBy('id');
+    return res.json(models);
   } catch (error) {
+    console.error('Erro ao buscar modelos:', error);
     return res.status(500).json({ error: error.message });
   }
 };
 
 export const getEmailModelById = async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM email_model WHERE id = $1', [
-      req.params.id,
-    ]);
+  const { id } = req.params;
 
-    if (result.rows.length === 0) {
+  try {
+    const model = await db('email_model').where({ id }).first();
+
+    if (!model) {
       return res.status(404).json({ error: 'Modelo não encontrado' });
     }
 
-    return res.json(result.rows[0]);
+    return res.json(model);
   } catch (error) {
+    console.error('Erro ao buscar modelo:', error);
     return res.status(500).json({ error: error.message });
   }
 };
 
 export const updateEmailModel = async (req, res) => {
   const { title, content } = req.body;
+  const { id } = req.params;
+
+  if (!title || !content) {
+    return res
+      .status(400)
+      .json({ error: 'Título e conteúdo são obrigatórios' });
+  }
 
   try {
-    const result = await pool.query(
-      `UPDATE email_model
-      SET title = $1, content = $2
-      WHERE id = $3 RETURNING *`,
-      [title, content, req.params.id]
-    );
+    const [updatedModel] = await db('email_model')
+      .where({ id })
+      .update({ title, content })
+      .returning('*');
 
-    if (result.rows.length === 0) {
+    if (!updatedModel) {
       return res.status(404).json({ error: 'Modelo não encontrado' });
     }
 
-    return res.json(result.rows[0]);
+    return res.json(updatedModel);
   } catch (error) {
-    console.error('Erro no banco de dados:', error);
+    console.error('Erro ao atualizar modelo:', error);
     return res.status(500).json({
       error: 'Erro ao atualizar modelo',
       details: error.message,
@@ -69,21 +82,24 @@ export const updateEmailModel = async (req, res) => {
 };
 
 export const deleteEmailModel = async (req, res) => {
-  try {
-    const result = await pool.query(
-      'DELETE FROM email_model WHERE id = $1 RETURNING *',
-      [req.params.id]
-    );
+  const { id } = req.params;
 
-    if (result.rowCount === 0) {
+  try {
+    const [deletedModel] = await db('email_model')
+      .where({ id })
+      .del()
+      .returning('*');
+
+    if (!deletedModel) {
       return res.status(404).json({ error: 'Modelo não encontrado' });
     }
 
     return res.json({
       message: 'Modelo excluído com sucesso',
-      deleted: result.rows[0],
+      deleted: deletedModel,
     });
   } catch (error) {
+    console.error('Erro ao excluir modelo:', error);
     return res.status(500).json({ error: error.message });
   }
 };

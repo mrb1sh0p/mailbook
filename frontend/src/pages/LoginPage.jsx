@@ -4,7 +4,7 @@ import { Link, Navigate } from 'react-router';
 
 const LoginPage = () => {
   const { user, login } = useAuth();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -15,14 +15,14 @@ const LoginPage = () => {
     e.preventDefault();
     setErrorMessage('');
 
-    if (!email || !password) {
+    if (!username || !password) {
       setErrorMessage('Por favor, preencha todos os campos');
       return;
     }
 
     try {
       setIsLoading(true);
-      await login({ email, password });
+      await login({ username, password });
     } catch (error) {
       setErrorMessage('Credenciais inválidas. Por favor, tente novamente.');
     } finally {
@@ -49,20 +49,20 @@ const LoginPage = () => {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label
-                htmlFor="email"
+                htmlFor="username"
                 className="block text-sm font-medium text-gray-700"
               >
-                E-mail
+                Usuário
               </label>
               <div className="mt-1">
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
+                  id="username"
+                  name="username"
+                  type="username"
+                  autoComplete="username"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>

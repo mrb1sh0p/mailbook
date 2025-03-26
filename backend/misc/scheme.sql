@@ -7,8 +7,8 @@ CREATE TABLE orgs (
     name TEXT NOT NULL,
     address TEXT NOT NULL,
     phone TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE CHECK (email ~ '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'),
-    cnpj TEXT CHECK (cnpj ~ '^[0-9]{14}$'),
+    email TEXT NOT NULL UNIQUE,
+    cnpj TEXT UNIQUE,
     utc_created_on TIMESTAMP NOT NULL DEFAULT now()
 );
 

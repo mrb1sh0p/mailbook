@@ -5,19 +5,24 @@ export const createTransporter = (smtpConfig) => {
   return nodemailer.createTransport({
     host: smtpConfig.host,
     port: smtpConfig.port,
-    secure: smtpConfig.secure === "SSL", // Define conexão segura via SSL, se aplicável
-    requireTLS: smtpConfig.secure === "TLS", //
+    secure: smtpConfig.secure === 'SSL',
+    requireTLS: smtpConfig.secure === 'TLS',
     auth: {
       user: smtpConfig.username,
-      pass: smtpConfig.pass
+      pass: smtpConfig.pass,
     },
     tls: {
-      rejectUnauthorized: false
-    }
+      rejectUnauthorized: false,
+    },
   });
 };
 
-export const sendSingleEmail = async (transporter, smtpConfig, emailData, html) => {
+export const sendSingleEmail = async (
+  transporter,
+  smtpConfig,
+  emailData,
+  html
+) => {
   const mailOptions = {
     from: `"${smtpConfig.username.split('@')[0]}" <${smtpConfig.username}>`,
     to: emailData.to,
@@ -25,13 +30,13 @@ export const sendSingleEmail = async (transporter, smtpConfig, emailData, html) 
     html,
     headers: {
       'X-Priority': '1',
-      'Reply-To': smtpConfig.username
+      'Reply-To': smtpConfig.username,
     },
     envelope: {
       from: smtpConfig.username,
-      to: emailData.to
+      to: emailData.to,
     },
-    attachments: []
+    attachments: [],
   };
 
   if (emailData.attachment) {
@@ -42,7 +47,7 @@ export const sendSingleEmail = async (transporter, smtpConfig, emailData, html) 
   }
 
   const info = await transporter.sendMail(mailOptions);
-  
+
   if (emailData.attachment) {
     fs.unlinkSync(`uploads/${emailData.attachment.filename}`);
   }
