@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import FeedbackMessage from '../../components/UI/FeedbackMessage';
 import OrganizationsManager from '../../components/Overlord/OrganizationsManager';
 import UsersManager from '../../components/Overlord/UsersManager';
+import SMTPConfigPanel from '../../components/SMTPConfig/SMTPConfigPanel';
 import DarkModeToggle from '../../components/DarkModeToggle';
 import {
   FaBuilding,
@@ -11,6 +12,7 @@ import {
   FaSignOutAlt,
   FaChevronLeft,
   FaChevronRight,
+  FaCogs,
 } from 'react-icons/fa';
 
 const OverlordPage = () => {
@@ -27,6 +29,8 @@ const OverlordPage = () => {
     switch (activeMenu) {
       case 'orgs':
         return <OrganizationsManager />;
+      case 'smtp':
+        return <SMTPConfigPanel />;
       case 'users':
         return <UsersManager />;
       default:
@@ -41,7 +45,6 @@ const OverlordPage = () => {
           sidebarOpen ? 'w-64' : 'w-16'
         } bg-white dark:bg-gray-800 shadow-md p-4 transition-all duration-300 flex flex-col justify-between relative`}
       >
-        {/* Botão para retrair/expandir */}
         <button
           onClick={toggleSidebar}
           className="absolute top-4 right-[-12px] bg-blue-500 text-white rounded-full p-1 shadow-md"
@@ -67,6 +70,19 @@ const OverlordPage = () => {
               >
                 <FaBuilding />
                 {sidebarOpen && 'Organizações'}
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => setActiveMenu('smtp')}
+                className={`w-full flex items-center gap-2 p-2 rounded dark:text-white ${
+                  activeMenu === 'smtp'
+                    ? 'bg-blue-500 text-white'
+                    : 'hover:bg-gray-100 text-gray-900 dark:hover:bg-gray-600'
+                }`}
+              >
+                <FaCogs />
+                {sidebarOpen && 'SMTP Config'}
               </button>
             </li>
             <li>
@@ -97,8 +113,7 @@ const OverlordPage = () => {
       </aside>
 
       <main className="flex-1 p-8 text-gray-900 dark:text-gray-100">
-        <header className="mb-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Página do Overlord</h1>
+        <header className="mb-4 flex justify-end items-center">
           <DarkModeToggle />
         </header>
         {error && <FeedbackMessage type="error" message={error} />}

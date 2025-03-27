@@ -6,6 +6,8 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [type] = useState(null);
+  const [selectedSmtp, setSelectedSmtp] = useState(null);
   const [overlord, setOverlord] = useState(null);
   const [loading, setLoading] = useState(true);
   const { getDataUser } = useUser();
@@ -79,7 +81,17 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, overlord, loading, login, logout, loginOverlord }}
+      value={{
+        user,
+        overlord,
+        loading,
+        selectedSmtp,
+        type,
+        login,
+        setSelectedSmtp,
+        logout,
+        loginOverlord,
+      }}
     >
       {children}
     </AuthContext.Provider>
