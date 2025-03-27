@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 export const useOverlord = () => {
   const token = localStorage.getItem('overlordToken');
   const [loading, setLoading] = useState(false);
+  const [smtpList, setSmtpList] = useState([]);
   const [orgs, setOrgs] = useState([]);
   const [error, setError] = useState(null);
   const [selectedOrg, setSelectedOrg] = useState(null);
@@ -20,6 +21,20 @@ export const useOverlord = () => {
       console.error('Erro ao carregar organizações:', err);
       setError(err.response?.data?.error || 'Erro ao carregar organizações');
       return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSMTP = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data } = await axios.get('/api/v1/smtp');
+      setSmtpList(data);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Erro ao carregar configurações');
     } finally {
       setLoading(false);
     }
@@ -139,6 +154,7 @@ export const useOverlord = () => {
 
   useEffect(() => {
     fetchOrgs();
+    fetchSMTP();
   }, []);
 
   return {
@@ -146,6 +162,7 @@ export const useOverlord = () => {
     loading,
     error,
     selectedOrg,
+    smtpList,
     getUsersByOrg,
     setSelectedOrg,
     fetchOrgs,

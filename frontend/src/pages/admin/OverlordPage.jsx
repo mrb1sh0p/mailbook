@@ -14,22 +14,12 @@ import {
   FaChevronRight,
   FaCogs,
 } from 'react-icons/fa';
-import { useSMTP } from '../../hooks/useSMTP';
 
 const OverlordPage = () => {
   const { error, loading } = useOverlord();
   const { logout } = useAuth();
   const [activeMenu, setActiveMenu] = useState('orgs');
   const [sidebarOpen, setSidebarOpen] = useState(true);
-
-  const {
-    smtpList,
-    selectedSmtp,
-    loading: smtpLoading,
-    selectSMTP,
-    saveSMTP,
-    updateSMTP,
-  } = useSMTP();
 
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
@@ -40,16 +30,7 @@ const OverlordPage = () => {
       case 'orgs':
         return <OrganizationsManager />;
       case 'smtp':
-        return (
-          <SMTPConfigPanel
-            configs={smtpList}
-            selectedConfig={selectedSmtp}
-            onSelect={selectSMTP}
-            onSave={saveSMTP}
-            onUpdate={updateSMTP}
-            loading={smtpLoading}
-          />
-        );
+        return <SMTPConfigPanel />;
       case 'users':
         return <UsersManager />;
       default:
@@ -64,7 +45,6 @@ const OverlordPage = () => {
           sidebarOpen ? 'w-64' : 'w-16'
         } bg-white dark:bg-gray-800 shadow-md p-4 transition-all duration-300 flex flex-col justify-between relative`}
       >
-        {/* Botão para retrair/expandir */}
         <button
           onClick={toggleSidebar}
           className="absolute top-4 right-[-12px] bg-blue-500 text-white rounded-full p-1 shadow-md"
@@ -133,8 +113,7 @@ const OverlordPage = () => {
       </aside>
 
       <main className="flex-1 p-8 text-gray-900 dark:text-gray-100">
-        <header className="mb-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Página do Overlord</h1>
+        <header className="mb-4 flex justify-end items-center">
           <DarkModeToggle />
         </header>
         {error && <FeedbackMessage type="error" message={error} />}

@@ -1,33 +1,84 @@
-import SMTPConfigForm from './SMTPConfigForm';
+import React, { useState, useEffect } from 'react';
+import { useOverlord } from '../../hooks/useOverlord';
 import SMTPConfigSelector from './SMTPConfigSelector';
+import SMTPConfigForm from './SMTPConfigForm';
 
-const SMTPConfigPanel = ({
-  configs,
-  selectedConfig,
-  onSelect,
-  loading,
-  onUpdate,
-  onSave,
-}) => {
-  const handleSelect = (id) => {
-    onSelect(id);
+const SMTPConfigPanel = () => {
+  const { orgs, smtpList } = useOverlord();
+  const [selectedOrgId, setSelectedOrgId] = useState('');
+  const [smtps, setSmtps] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedConfig, setSelectedConfig] = useState(null);
+
+  useEffect(() => {
+    if (selectedOrgId) {
+      fetchSmtpConfigs(selectedOrgId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedOrgId]);
+
+  const fetchSmtpConfigs = async (orgId) => {
+    setLoading(true);
+    try {
+      const orgSmtps = smtpList.filter((smtp) => smtp.org_id === orgId);
+      console.log(orgSmtps);
+      setSmtps(orgSmtps || []);
+    } catch (error) {
+      console.error('Erro ao carregar SMTPs', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelectOrg = (orgId) => {
+    setSelectedOrgId(orgId);
+  };
+
+  const handleSelectSmtp = (id) => {
+    const selected = smtps.find((smtp) => smtp.id === id);
+    setSelectedConfig(selected);
   };
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm dark:bg-gray-800">
       <div className="mt-6">
-        <SMTPConfigSelector
-          configs={configs}
-          selectedId={selectedConfig?.id}
-          onSelect={handleSelect}
-        />
+        <div className="mb-4">
+          <label className="block mb-2 font-medium text-gray-900 dark:text-white">
+            Selecione a Organização:
+          </label>
+          <select
+            value={selectedOrgId}
+            onChange={(e) => handleSelectOrg(e.target.value)}
+            className="w-full p-2 border rounded-lg bg-white text-black dark:bg-gray-700 dark:text-white"
+            required
+          >
+            <option value="" disabled>
+              Selecione...
+            </option>
+            {orgs.map((org) => (
+              <option key={org.id} value={org.id}>
+                {org.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <SMTPConfigForm
-          initialConfig={selectedConfig || {}}
-          onUpdate={onUpdate}
-          onSave={onSave}
-          loading={loading}
-        />
+        {selectedOrgId && (
+          <SMTPConfigSelector
+            configs={smtps}
+            selectedId={selectedConfig?.id}
+            onSelect={handleSelectSmtp}
+          />
+        )}
+
+        {selectedConfig && (
+          <SMTPConfigForm
+            initialConfig={selectedConfig}
+            onUpdate={() => {}}
+            onSave={() => {}}
+            loading={loading}
+          />
+        )}
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ root.render(
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/admin_overlord" element={<OverlordLogin />} />
+          <Route path="/login_overlord" element={<OverlordLogin />} />
 
           <Route element={<ProtectedRouteUser />}>
             <Route path="/app" element={<App />} />
