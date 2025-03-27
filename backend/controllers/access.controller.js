@@ -34,7 +34,7 @@ export const LoginOverlord = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: result.id, role: result.role },
+      { id: result.id, roleIsOrg: result.role },
       process.env.SECRET_KEY,
       { expiresIn: '24h' }
     );

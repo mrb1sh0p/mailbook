@@ -1,5 +1,5 @@
 export const requireSuperAdmin = async (req, res, next) => {
-  const { role } = req.user;
+  const { roleIsOrg: role } = req.user;
 
   if (role !== 'overlord') {
     return res.status(403).json({

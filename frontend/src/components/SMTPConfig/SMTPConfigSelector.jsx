@@ -2,8 +2,8 @@ const SMTPConfigSelector = ({ configs, selectedId, onSelect }) => {
   return (
     <div className="mb-4">
       <label className="block mb-2 font-medium">Configuração Existente:</label>
-      <select 
-        className="border p-2 rounded w-full"
+      <select
+        className="border p-2 rounded w-full dark:bg-gray-800"
         onChange={(e) => onSelect(e.target.value)}
         value={selectedId || ''}
       >

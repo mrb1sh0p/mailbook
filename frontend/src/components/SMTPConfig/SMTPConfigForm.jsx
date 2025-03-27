@@ -53,34 +53,27 @@ const SMTPConfigForm = ({ initialConfig, onUpdate, onSave, loading }) => {
     }
   };
 
+  const Input = ({ label, name, type = 'text', required = true }) => (
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-100">
+        {label}
+      </label>
+      <input
+        name={name}
+        value={config[name]}
+        onChange={handleChange}
+        type={type}
+        className="w-full p-2 border rounded-md dark:bg-gray-800"
+        required={required}
+      />
+    </div>
+  );
+
   return (
     <form onSubmit={handleSubmit} className="mt-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Título
-          </label>
-          <input
-            name="title"
-            value={config.title}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Host SMTP
-          </label>
-          <input
-            name="host"
-            value={config.host}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
-            required
-          />
-        </div>
+        <Input label="Título" name="title" />
+        <Input label="Host" name="host" />
 
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
@@ -89,53 +82,16 @@ const SMTPConfigForm = ({ initialConfig, onUpdate, onSave, loading }) => {
           <select
             value={encryptionType}
             onChange={handleEncryptionChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full p-2 border rounded-md dark:bg-gray-800"
           >
             <option value="tls">TLS (Recomendado)</option>
             <option value="ssl">SSL</option>
           </select>
         </div>
 
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Porta
-          </label>
-          <input
-            type="number"
-            name="port"
-            value={config.port}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Usuário
-          </label>
-          <input
-            name="username"
-            value={config.username}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Senha
-          </label>
-          <input
-            type="password"
-            name="pass"
-            value={config.pass}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
-            required
-          />
-        </div>
+        <Input label="Porta" name="port" type="number" />
+        <Input label="Usuário" name="username" />
+        <Input label="Senha" name="pass" type="password" />
       </div>
 
       <div className="text-sm text-gray-500 mt-2 mb-4">

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import SMTPConfigPanel from './components/SMTPConfig/SMTPConfigPanel';
 import EmailComposer from './components/EmailForm/EmailComposer';
 import FeedbackMessage from './components/UI/FeedbackMessage';
+import DarkModeToggle from './components/DarkModeToggle';
 import { useSMTP } from './hooks/useSMTP';
 import { useEmail } from './hooks/useEmail';
 import { useUser } from './hooks/useUser';
@@ -115,15 +116,15 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50 flex text-gray-900 dark:bg-gray-900 dark:text-white">
       <aside
         className={`${
           sidebarOpen ? 'w-64' : 'w-16'
-        } bg-white shadow-md p-4 transition-all duration-300 flex flex-col justify-between relative`}
+        } bg-white shadow-md p-4 transition-all duration-300 flex flex-col justify-between relative dark:bg-gray-800`}
       >
         <button
           onClick={toggleSidebar}
-          className="absolute top-4 right-[-12px] bg-blue-500 text-white rounded-full p-1 shadow-md"
+          className="absolute top-4 right-[-12px] bg-blue-500 text-white rounded-full p-1 shadow-md "
         >
           {sidebarOpen ? <FaChevronLeft /> : <FaChevronRight />}
         </button>
@@ -133,10 +134,10 @@ const App = () => {
             <li>
               <button
                 onClick={() => setActiveMenu('smtp')}
-                className={`w-full flex items-center gap-2 p-2 rounded ${
+                className={`w-full flex items-center gap-2 p-2 rounded dark:text-white ${
                   activeMenu === 'smtp'
                     ? 'bg-blue-500 text-white'
-                    : 'hover:bg-gray-100 text-gray-900'
+                    : 'hover:bg-gray-100 text-gray-900 dark:hover:bg-gray-600'
                 }`}
               >
                 <FaCogs />
@@ -146,10 +147,10 @@ const App = () => {
             <li>
               <button
                 onClick={() => setActiveMenu('email')}
-                className={`w-full flex items-center gap-2 p-2 rounded ${
+                className={`w-full flex items-center gap-2 p-2 rounded dark:text-white ${
                   activeMenu === 'email'
                     ? 'bg-blue-500 text-white'
-                    : 'hover:bg-gray-100 text-gray-900'
+                    : 'hover:bg-gray-100 text-gray-900 dark:hover:bg-gray-600'
                 }`}
               >
                 <FaEnvelope />
@@ -161,7 +162,7 @@ const App = () => {
         <div>
           <button
             onClick={logout}
-            className="w-full flex items-center gap-2 bg-red-500 text-white p-2 rounded"
+            className="w-full flex items-center gap-2 bg-red-500 text-white p-2 rounded hover:bg-red-600"
           >
             <FaSignOutAlt />
             {sidebarOpen && 'Sair'}
@@ -180,6 +181,7 @@ const App = () => {
               </p>
             )}
           </div>
+          <DarkModeToggle />
         </header>
         {combinedError && (
           <FeedbackMessage type="error" message={combinedError} />

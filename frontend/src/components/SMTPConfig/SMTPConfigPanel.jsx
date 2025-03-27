@@ -1,4 +1,3 @@
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import SMTPConfigForm from './SMTPConfigForm';
 import SMTPConfigSelector from './SMTPConfigSelector';
 
@@ -7,8 +6,6 @@ const SMTPConfigPanel = ({
   selectedConfig,
   onSelect,
   loading,
-  showConfig,
-  toggleShowConfig,
   onUpdate,
   onSave,
 }) => {
@@ -17,7 +14,7 @@ const SMTPConfigPanel = ({
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm">
+    <div className="bg-white p-6 rounded-xl shadow-sm dark:bg-gray-800">
       <div className="mt-6">
         <SMTPConfigSelector
           configs={configs}
