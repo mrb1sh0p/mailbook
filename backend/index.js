@@ -14,8 +14,8 @@ app.use(express.json());
 
 const apiVersion = '/api/v1';
 app.use(apiVersion, userRoutes);
-app.use(apiVersion, smtpRoutes);
 app.use(apiVersion, emailRoutes);
+app.use(apiVersion, smtpRoutes);
 app.use(apiVersion, orgsRoutes);
 
 app.get('/', (req, res) => {

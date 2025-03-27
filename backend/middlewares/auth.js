@@ -12,7 +12,7 @@ export const requireSuperAdmin = async (req, res, next) => {
 };
 
 export const requireOrgAdmin = async (req, res, next) => {
-  const { role } = req.user;
+  const { roleIsOrg: role } = req.user;
 
   if (role !== 'admin' && role !== 'overlord') {
     return res.status(403).json({

@@ -18,7 +18,7 @@ const App = () => {
   const { getDataUser, loading } = useUser();
   const { logout } = useAuth();
   const [user, setUser] = useState(null);
-  const [activeMenu, setActiveMenu] = useState('email');
+  const [activeMenu, setActiveMenu] = useState('email'); // Define a página padrão
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const toggleSidebar = () => {
@@ -158,7 +158,6 @@ const App = () => {
             </li>
           </ul>
         </div>
-        {/* Botão Sair posicionado no final da sidebar */}
         <div>
           <button
             onClick={logout}

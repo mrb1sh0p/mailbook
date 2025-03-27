@@ -1,4 +1,7 @@
-import db from '../configs/knexfile.js';
+import knex from 'knex';
+import dbconfig from '../configs/knexfile.js';
+
+const db = knex(dbconfig);
 
 export const createEmailModel = async (req, res) => {
   const { title, content } = req.body;
@@ -24,9 +27,22 @@ export const createEmailModel = async (req, res) => {
   }
 };
 
-export const getEmailModels = async (req, res) => {
+export const getEmailAllModels = async (req, res) => {
   try {
     const models = await db('email_model').orderBy('id');
+    return res.json(models);
+  } catch (error) {
+    console.error('Erro ao buscar modelos:', error);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+export const getEmailModels = async (req, res) => {
+  const { orgId } = req.user;
+  try {
+    const models = await db('email_model')
+      .where({ org_id: orgId })
+      .orderBy('id');
     return res.json(models);
   } catch (error) {
     console.error('Erro ao buscar modelos:', error);

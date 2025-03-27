@@ -23,6 +23,7 @@ export const useModel = () => {
       setModelList(data);
     } catch (err) {
       setError(err.response?.data?.error || 'Erro ao carregar modelos');
+      console.error('Erro ao buscar modelos:', err);
     } finally {
       setLoading(false);
     }
