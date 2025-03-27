@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 export const useOverlord = () => {
   const token = localStorage.getItem('overlordToken');
   const [loading, setLoading] = useState(false);
+  const [selectedSmtp, setSelectedSmtp] = useState(null);
   const [smtpList, setSmtpList] = useState([]);
   const [orgs, setOrgs] = useState([]);
   const [error, setError] = useState(null);
@@ -43,7 +44,6 @@ export const useOverlord = () => {
   const createOrg = async (org) => {
     try {
       setLoading(true);
-      console.log('data', org);
       const { data } = await axios.post('/api/v1/orgs', org);
       await fetchOrgs();
       return data;
@@ -152,6 +152,51 @@ export const useOverlord = () => {
     }
   };
 
+  const saveSMTP = async (config) => {
+    setLoading(true);
+    setError(null);
+
+    console.log(config);
+
+    try {
+      const { data } = await axios.post('/api/v1/smtp', config);
+      setSmtpList((prev) => [...prev, data]);
+      return data;
+    } catch (err) {
+      setError(err.response?.data?.error || 'Erro ao salvar configuração');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateSMTP = async (updatedConfig) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data } = await axios.put(
+        `/api/v1/smtp/${updatedConfig.id}`,
+        updatedConfig
+      );
+
+      setSmtpList((prev) =>
+        prev.map((config) => (config.id === data.id ? data : config))
+      );
+
+      if (selectedSmtp?.id === data.id) {
+        setSelectedSmtp(data);
+      }
+
+      return data;
+    } catch (err) {
+      setError(err.response?.data?.error || 'Erro ao atualizar configuração');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchOrgs();
     fetchSMTP();
@@ -163,6 +208,8 @@ export const useOverlord = () => {
     error,
     selectedOrg,
     smtpList,
+    updateSMTP,
+    saveSMTP,
     getUsersByOrg,
     setSelectedOrg,
     fetchOrgs,

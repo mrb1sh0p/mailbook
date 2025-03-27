@@ -4,7 +4,7 @@ import SMTPConfigSelector from './SMTPConfigSelector';
 import SMTPConfigForm from './SMTPConfigForm';
 
 const SMTPConfigPanel = () => {
-  const { orgs, smtpList } = useOverlord();
+  const { orgs, smtpList, saveSMTP, updateSMTP } = useOverlord();
   const [selectedOrgId, setSelectedOrgId] = useState('');
   const [smtps, setSmtps] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -71,12 +71,13 @@ const SMTPConfigPanel = () => {
           />
         )}
 
-        {selectedConfig && (
+        {selectedOrgId && (
           <SMTPConfigForm
             initialConfig={selectedConfig}
-            onUpdate={() => {}}
-            onSave={() => {}}
+            onUpdate={updateSMTP}
+            onSave={saveSMTP}
             loading={loading}
+            org_id={selectedOrgId}
           />
         )}
       </div>

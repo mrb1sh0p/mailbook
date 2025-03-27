@@ -4,8 +4,16 @@ import dbconfig from '../configs/knexfile.js';
 const db = knex(dbconfig);
 
 export const createSmtpConfig = async (req, res) => {
-  const { orgId } = req.user;
+  let orgId;
   const { title, host, port, secure, username, pass } = req.body;
+
+  if (req.user.roleIsOrg === 'overlord') {
+    orgId = req.body.orgId;
+  } else {
+    orgId = req.user.orgId;
+  }
+
+  console.log(orgId);
 
   if (!title || !host || !port || !username || !pass) {
     return res.status(400).json({ error: 'Todos os campos são obrigatórios' });

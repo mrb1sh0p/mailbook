@@ -10,25 +10,29 @@ const defaultConfig = {
   pass: '',
 };
 
-const SMTPConfigForm = ({ initialConfig, onUpdate, onSave, loading }) => {
-  const initialState =
-    initialConfig && initialConfig.id ? initialConfig : defaultConfig;
-  const [config, setConfig] = useState(initialState);
-  const [encryptionType, setEncryptionType] = useState(
-    initialState.secure?.toUpperCase() === 'SSL' ? 'ssl' : 'tls'
-  );
+const SMTPConfigForm = ({
+  initialConfig,
+  onUpdate,
+  onSave,
+  loading,
+  org_id,
+}) => {
+  const [config, setConfig] = useState(defaultConfig);
+  const [encryptionType, setEncryptionType] = useState('tls');
 
   useEffect(() => {
-    const newState =
-      initialConfig && initialConfig.id ? initialConfig : defaultConfig;
-    setConfig(newState);
-    setEncryptionType(newState.secure?.toUpperCase() === 'SSL' ? 'ssl' : 'tls');
+    if (initialConfig && initialConfig.id) {
+      setConfig(initialConfig);
+      setEncryptionType(
+        initialConfig.secure?.toUpperCase() === 'SSL' ? 'ssl' : 'tls'
+      );
+    }
   }, [initialConfig]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setConfig((prev) => ({
-      ...prev,
+    setConfig((prevConfig) => ({
+      ...prevConfig,
       [name]: name === 'port' ? Number(value) : value,
     }));
   };
@@ -36,8 +40,8 @@ const SMTPConfigForm = ({ initialConfig, onUpdate, onSave, loading }) => {
   const handleEncryptionChange = (e) => {
     const type = e.target.value;
     setEncryptionType(type);
-    setConfig((prev) => ({
-      ...prev,
+    setConfig((prevConfig) => ({
+      ...prevConfig,
       secure: type.toUpperCase(),
       port: type === 'ssl' ? 465 : 587,
     }));
@@ -45,35 +49,43 @@ const SMTPConfigForm = ({ initialConfig, onUpdate, onSave, loading }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (config.id) {
-      onUpdate(config);
-    } else {
-      onSave(config);
-    }
+    const newConfig = {
+      ...config,
+      orgId: org_id,
+    };
+    config.id ? onUpdate(newConfig) : onSave(newConfig);
   };
-
-  const Input = ({ label, name, type = 'text', required = true }) => (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-100">
-        {label}
-      </label>
-      <input
-        name={name}
-        value={config[name]}
-        onChange={handleChange}
-        type={type}
-        className="w-full p-2 border rounded-md dark:bg-gray-800"
-        required={required}
-      />
-    </div>
-  );
 
   return (
     <form onSubmit={handleSubmit} className="mt-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <Input label="Título" name="title" />
-        <Input label="Host" name="host" />
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-100">
+            Título
+          </label>
+          <input
+            name="title"
+            value={config.title}
+            onChange={handleChange}
+            type="text"
+            className="w-full p-2 border rounded-md dark:bg-gray-800"
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-100">
+            Host
+          </label>
+          <input
+            name="host"
+            value={config.host}
+            onChange={handleChange}
+            type="text"
+            className="w-full p-2 border rounded-md dark:bg-gray-800"
+            required
+          />
+        </div>
 
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-100">
@@ -89,9 +101,47 @@ const SMTPConfigForm = ({ initialConfig, onUpdate, onSave, loading }) => {
           </select>
         </div>
 
-        <Input label="Porta" name="port" type="number" />
-        <Input label="Usuário" name="username" />
-        <Input label="Senha" name="pass" type="password" />
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-100">
+            Porta
+          </label>
+          <input
+            name="port"
+            value={config.port}
+            onChange={handleChange}
+            type="number"
+            className="w-full p-2 border rounded-md dark:bg-gray-800"
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-100">
+            Usuário
+          </label>
+          <input
+            name="username"
+            value={config.username}
+            onChange={handleChange}
+            type="text"
+            className="w-full p-2 border rounded-md dark:bg-gray-800"
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-100">
+            Senha
+          </label>
+          <input
+            name="pass"
+            value={config.pass}
+            onChange={handleChange}
+            type="password"
+            className="w-full p-2 border rounded-md dark:bg-gray-800"
+            required
+          />
+        </div>
       </div>
 
       <div className="text-sm text-gray-500 mt-2 mb-4">

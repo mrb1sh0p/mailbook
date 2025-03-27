@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 export const useSMTP = () => {
-  const token = localStorage.getItem('token');
+  let token = localStorage.getItem('token');
 
   const [smtpList, setSmtpList] = useState([]);
   const [selectedSmtp, setSelectedSmtp] = useState(null);
@@ -33,6 +33,7 @@ export const useSMTP = () => {
 
     try {
       const { data } = await axios.post('/api/v1/smtp', config);
+      console.log(data);
       setSmtpList((prev) => [...prev, data]);
       return data;
     } catch (err) {
