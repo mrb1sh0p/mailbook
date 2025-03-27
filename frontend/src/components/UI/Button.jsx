@@ -12,8 +12,11 @@ const Button = ({
   const variants = {
     primary: 'bg-blue-600 hover:bg-blue-700 text-white',
     secondary: 'bg-gray-100 hover:bg-gray-200 text-gray-700',
+    cancel: 'bg-gray-300 hover:bg-gray-400 text-gray-700',
+    save: 'bg-green-600 hover:bg-green-700 text-white',
     danger: 'bg-red-600 hover:bg-red-700 text-white',
     success: 'bg-green-600 hover:bg-green-700 text-white',
+    edit: 'bg-yellow-600 hover:bg-yellow-700 text-white',
   };
 
   return (
