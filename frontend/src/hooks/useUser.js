@@ -13,12 +13,7 @@ export const useUser = () => {
     try {
       setLoading(true);
       const { data } = await axios.get('/api/v1/userdata');
-      const userData = {
-        ...data,
-        name: data.email.split('@')[0],
-        orgName: data.name,
-      };
-      return userData;
+      return data;
     } catch (err) {
       console.error('Erro ao carregar usuário:', err);
       return null;

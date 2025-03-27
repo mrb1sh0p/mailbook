@@ -76,8 +76,8 @@ const App = () => {
           ) : (
             <div>
               <p>
-                {user?.name || 'Usuário desconhecido'} -{' '}
-                {user?.orgName || 'Sem organização'}
+                {user?.name || 'Usuário desconhecido'} - {''}
+                {user?.org_name || 'Sem organização'} - {`(${user?.role})`}
               </p>
             </div>
           )}
