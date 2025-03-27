@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import FeedbackMessage from '../../components/UI/FeedbackMessage';
 import OrganizationsManager from '../../components/Overlord/OrganizationsManager';
 import UsersManager from '../../components/Overlord/UsersManager';
+import DarkModeToggle from '../../components/DarkModeToggle';
 
 const OverlordPage = () => {
   const { error, loading } = useOverlord();
@@ -22,10 +23,11 @@ const OverlordPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-md p-4">
-        <h2 className="text-xl font-bold mb-4">Menu Admin</h2>
+    <div className="min-h-screen bg-gray-200 dark:bg-gray-900 flex">
+      <aside className="w-64 bg-white dark:bg-gray-800 shadow-md p-4">
+        <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+          Menu Admin
+        </h2>
         <ul className="space-y-2">
           <li>
             <button
@@ -33,7 +35,7 @@ const OverlordPage = () => {
               className={`w-full text-left p-2 rounded ${
                 activeMenu === 'orgs'
                   ? 'bg-blue-500 text-white'
-                  : 'hover:bg-gray-100'
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-300'
               }`}
             >
               Organizações
@@ -45,7 +47,7 @@ const OverlordPage = () => {
               className={`w-full text-left p-2 rounded ${
                 activeMenu === 'users'
                   ? 'bg-blue-500 text-white'
-                  : 'hover:bg-gray-100'
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-300'
               }`}
             >
               Usuários
@@ -60,9 +62,10 @@ const OverlordPage = () => {
         </button>
       </aside>
 
-      <main className="flex-1 p-8">
-        <header className="mb-4">
+      <main className="flex-1 p-8 text-gray-900 dark:text-gray-100">
+        <header className="mb-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold">Página do Overlord</h1>
+          <DarkModeToggle />
         </header>
         {error && <FeedbackMessage type="error" message={error} />}
         {loading ? <div>Carregando...</div> : renderContent()}
