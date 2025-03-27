@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "knex": "node ./node_modules/knex/bin/cli.js --knexfile configs/knexfile.js --migrations-directory ../migrations"
+    "knex": "node ./node_modules/knex/bin/cli.js --knexfile configs/knexfile.js --migrations-directory ../migrations",
+    "knex:up": "npm run knex migrate:up",
+    "knex:down": "npm run knex migrate:rollback",
+    "knex:make": "npm run knex migrate:make"
   },
   "keywords": [],
   "author": "João Gustavo Soares Bispo",

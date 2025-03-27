@@ -11,11 +11,11 @@ dotenv.config({ path: path.resolve(__dirname, '../.env') });
 const dbConfig = {
   client: 'pg',
   connection: {
-    host: process.env.PSQL_DB_HOST,
-    database: process.env.PSQL_DB_DATABASE,
-    user: process.env.PSQL_DB_USERNAME,
-    password: process.env.PSQL_DB_PASSWORD,
-    port: process.env.PSQL_DB_PORT,
+    host: process.env.PG_HOST,
+    database: process.env.PG_DATABASE,
+    user: process.env.PG_USER,
+    password: process.env.PG_PASSWORD,
+    port: process.env.PG_PORT,
   },
   migrations: {
     directory: path.resolve(__dirname, 'migrations'),
