@@ -9,7 +9,7 @@ const TableUser = ({ users, setMessage, fetchUsers, selectedOrgId }) => {
 
   return (
     <div className="overflow-x-auto mb-4 dark:bg-gray-800 rounded shadow-md p-2 dark:text-white bg-white text-gray-900">
-      <table className="min-w-full rounded-lg">
+      <table className="rounded-lg w-full">
         <thead className="bg-gray-200 dark:bg-gray-700">
           <tr>
             <th className="p-3 text-left">Nome</th>
@@ -20,10 +20,7 @@ const TableUser = ({ users, setMessage, fetchUsers, selectedOrgId }) => {
         </thead>
         <tbody>
           {users.map((user) => (
-            <tr
-              key={user.id}
-              className="hover:bg-gray-100 transition duration-150"
-            >
+            <tr key={user.id} className="transition duration-150">
               <td className="p-3">{user.name}</td>
               <td className="p-3">{user.email}</td>
               <td className="p-3">{user.role}</td>
@@ -34,7 +31,7 @@ const TableUser = ({ users, setMessage, fetchUsers, selectedOrgId }) => {
                     console.log(user);
                     setShowChangePassword(true);
                   }}
-                  className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition"
+                  className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition dark:bg-yellow-600"
                 >
                   Alterar Senha
                 </button>
@@ -47,7 +44,7 @@ const TableUser = ({ users, setMessage, fetchUsers, selectedOrgId }) => {
                     });
                     await fetchUsers();
                   }}
-                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition dark:bg-red-600"
                 >
                   Remover
                 </button>
@@ -59,22 +56,22 @@ const TableUser = ({ users, setMessage, fetchUsers, selectedOrgId }) => {
 
       {showChangePassword && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-1/3 dark:bg-gray-800">
             <h2 className="text-lg font-bold mb-4">Alterar Senha</h2>
             <input
               type="password"
-              className="w-full p-2 border rounded-lg mb-3"
+              className="w-full p-2 border rounded-lg mb-3 dark:bg-gray-700 dark:text-white"
               placeholder="Nova Senha"
             />
             <input
               type="password"
-              className="w-full p-2 border rounded-lg mb-3"
+              className="w-full p-2 border rounded-lg mb-3 dark:bg-gray-700 dark:text-white"
               placeholder="Confirmar Senha"
             />
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-2 dark:text-white">
               <button
                 onClick={() => setShowChangePassword(false)}
-                className="bg-gray-400 text-white px-3 py-1 rounded"
+                className="bg-gray-400 text-white px-3 py-1 rounded dark:bg-gray-600 hover:bg-gray-500 transition"
               >
                 Cancelar
               </button>
@@ -83,7 +80,7 @@ const TableUser = ({ users, setMessage, fetchUsers, selectedOrgId }) => {
                   await updateUser(selectedUser);
                   setShowChangePassword(false);
                 }}
-                className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition dark:bg-green-600"
               >
                 Alterar
               </button>
