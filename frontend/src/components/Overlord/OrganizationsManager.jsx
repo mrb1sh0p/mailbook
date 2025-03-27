@@ -58,9 +58,9 @@ const OrganizationsManager = () => {
           orgs.map((org) => (
             <div
               key={org.id}
-              className="bg-white p-4 shadow rounded flex justify-between items-center"
+              className="bg-gray-100 p-4 rounded flex justify-between items-center dark:bg-gray-800 shadow-md"
             >
-              <p className="font-bold">{org.name}</p>
+              <p className="font-bold ">{org.name}</p>
               <div>
                 <button
                   className="mr-2 bg-blue-500 text-white px-3 py-1 rounded"

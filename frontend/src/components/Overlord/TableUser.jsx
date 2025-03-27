@@ -8,26 +8,26 @@ const TableUser = ({ users, setMessage, fetchUsers, selectedOrgId }) => {
   const { updateUser } = useUser();
 
   return (
-    <div className="overflow-x-auto mb-4">
-      <table className="min-w-full border rounded-lg">
-        <thead className="bg-gray-200">
+    <div className="overflow-x-auto mb-4 dark:bg-gray-800 rounded shadow-md p-2 dark:text-white bg-white text-gray-900">
+      <table className="min-w-full rounded-lg">
+        <thead className="bg-gray-200 dark:bg-gray-700">
           <tr>
             <th className="p-3 text-left">Nome</th>
             <th className="p-3 text-left">E-mail</th>
             <th className="p-3 text-left">Papel</th>
-            <th className="p-3 text-left">Ações</th>
+            <th className="p-3 text-right">Ações</th>
           </tr>
         </thead>
         <tbody>
           {users.map((user) => (
             <tr
               key={user.id}
-              className="border-b hover:bg-gray-100 transition duration-150"
+              className="hover:bg-gray-100 transition duration-150"
             >
               <td className="p-3">{user.name}</td>
               <td className="p-3">{user.email}</td>
               <td className="p-3">{user.role}</td>
-              <td className="p-3 flex gap-2">
+              <td className="p-3 flex gap-2 justify-end">
                 <button
                   onClick={() => {
                     setSelectedUser(user);

@@ -37,7 +37,10 @@ const OrganizationForm = ({ initialOrg, onSubmit, onCancel, loading }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-gray-100 p-4 rounded mb-4">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-gray-100 p-4 rounded mb-4 dark:bg-gray-800"
+    >
       <div className="mb-4 gap-4 flex">
         <Input
           label={'CNPJ:'}
