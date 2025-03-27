@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react';
-import SMTPConfigPanel from './components/SMTPConfig/SMTPConfigPanel';
 import EmailComposer from './components/EmailForm/EmailComposer';
 import FeedbackMessage from './components/UI/FeedbackMessage';
 import DarkModeToggle from './components/DarkModeToggle';
-import { useSMTP } from './hooks/useSMTP';
 import { useEmail } from './hooks/useEmail';
 import { useUser } from './hooks/useUser';
 import { useAuth } from './contexts/AuthContext';
 import {
-  FaCogs,
   FaEnvelope,
   FaSignOutAlt,
   FaChevronLeft,
@@ -17,24 +14,14 @@ import {
 
 const App = () => {
   const { getDataUser, loading } = useUser();
-  const { logout } = useAuth();
+  const { logout, selectedSmtp } = useAuth();
   const [user, setUser] = useState(null);
-  const [activeMenu, setActiveMenu] = useState('email'); // Define a página padrão
+  const [activeMenu, setActiveMenu] = useState('email');
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
   };
-
-  const {
-    smtpList,
-    selectedSmtp,
-    error: smtpError,
-    loading: smtpLoading,
-    selectSMTP,
-    saveSMTP,
-    updateSMTP,
-  } = useSMTP();
 
   const {
     emailData,
@@ -63,6 +50,7 @@ const App = () => {
   }, [getDataUser, user]);
 
   const handleSend = async () => {
+    console.log('selectedSmtp:', selectedSmtp);
     if (!selectedSmtp) {
       alert('Selecione uma configuração SMTP primeiro');
       return;
@@ -80,21 +68,10 @@ const App = () => {
     }
   };
 
-  const combinedError = smtpError || emailError;
+  const combinedError = emailError;
 
   const renderContent = () => {
     switch (activeMenu) {
-      case 'smtp':
-        return (
-          <SMTPConfigPanel
-            configs={smtpList}
-            selectedConfig={selectedSmtp}
-            onSelect={selectSMTP}
-            onSave={saveSMTP}
-            onUpdate={updateSMTP}
-            loading={smtpLoading}
-          />
-        );
       case 'email':
         return (
           <EmailComposer
@@ -131,19 +108,6 @@ const App = () => {
         <div>
           {sidebarOpen && <h2 className="text-xl font-bold mb-4">Menu</h2>}
           <ul className="space-y-2">
-            <li>
-              <button
-                onClick={() => setActiveMenu('smtp')}
-                className={`w-full flex items-center gap-2 p-2 rounded dark:text-white ${
-                  activeMenu === 'smtp'
-                    ? 'bg-blue-500 text-white'
-                    : 'hover:bg-gray-100 text-gray-900 dark:hover:bg-gray-600'
-                }`}
-              >
-                <FaCogs />
-                {sidebarOpen && 'SMTP Config'}
-              </button>
-            </li>
             <li>
               <button
                 onClick={() => setActiveMenu('email')}

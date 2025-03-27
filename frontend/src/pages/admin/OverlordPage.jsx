@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import FeedbackMessage from '../../components/UI/FeedbackMessage';
 import OrganizationsManager from '../../components/Overlord/OrganizationsManager';
 import UsersManager from '../../components/Overlord/UsersManager';
+import SMTPConfigPanel from '../../components/SMTPConfig/SMTPConfigPanel';
 import DarkModeToggle from '../../components/DarkModeToggle';
 import {
   FaBuilding,
@@ -11,13 +12,24 @@ import {
   FaSignOutAlt,
   FaChevronLeft,
   FaChevronRight,
+  FaCogs,
 } from 'react-icons/fa';
+import { useSMTP } from '../../hooks/useSMTP';
 
 const OverlordPage = () => {
   const { error, loading } = useOverlord();
   const { logout } = useAuth();
   const [activeMenu, setActiveMenu] = useState('orgs');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const {
+    smtpList,
+    selectedSmtp,
+    loading: smtpLoading,
+    selectSMTP,
+    saveSMTP,
+    updateSMTP,
+  } = useSMTP();
 
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
@@ -27,6 +39,17 @@ const OverlordPage = () => {
     switch (activeMenu) {
       case 'orgs':
         return <OrganizationsManager />;
+      case 'smtp':
+        return (
+          <SMTPConfigPanel
+            configs={smtpList}
+            selectedConfig={selectedSmtp}
+            onSelect={selectSMTP}
+            onSave={saveSMTP}
+            onUpdate={updateSMTP}
+            loading={smtpLoading}
+          />
+        );
       case 'users':
         return <UsersManager />;
       default:
@@ -67,6 +90,19 @@ const OverlordPage = () => {
               >
                 <FaBuilding />
                 {sidebarOpen && 'Organizações'}
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => setActiveMenu('smtp')}
+                className={`w-full flex items-center gap-2 p-2 rounded dark:text-white ${
+                  activeMenu === 'smtp'
+                    ? 'bg-blue-500 text-white'
+                    : 'hover:bg-gray-100 text-gray-900 dark:hover:bg-gray-600'
+                }`}
+              >
+                <FaCogs />
+                {sidebarOpen && 'SMTP Config'}
               </button>
             </li>
             <li>

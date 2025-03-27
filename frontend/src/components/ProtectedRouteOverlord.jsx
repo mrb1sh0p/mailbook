@@ -5,7 +5,7 @@ const ProtectedRoute = () => {
   const { overlord, loading } = useAuth();
 
   if (loading) return <div>Carregando...</div>;
-  return overlord ? <Outlet /> : <Navigate to="/login_overlord" replace />;
+  return overlord ? <Outlet /> : <Navigate to="/admin" replace />;
 };
 
 export default ProtectedRoute;

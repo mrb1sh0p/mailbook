@@ -25,12 +25,26 @@ export const createSmtpConfig = async (req, res) => {
 
 export const getSmtpConfigs = async (req, res) => {
   try {
-    const { id } = req.user;
+    const { roleIsOrg } = req.user;
+    if (roleIsOrg === 'overlord') {
+      const configs = await db('smtp_config').select('*');
+      return res.status(200).json(configs);
+    }
+    const { orgId } = req.user;
 
-    const configs = await db('smtp_config').whereIn(
-      'org_id',
-      db('user_is_orgs').select('org_id').where('user_id', id)
-    );
+    const configs = await db('smtp_config').where('org_id', orgId).select('*');
+    return res.status(200).json(configs);
+  } catch (error) {
+    console.error('Erro ao buscar configurações:', error);
+    return res.status(500).json({ error: 'Erro ao buscar configurações' });
+  }
+};
+
+export const getSmtpConfigsByOrgId = async (req, res) => {
+  const { orgId } = req.user;
+
+  try {
+    const configs = await db('smtp_config').where('org_id', orgId).select('*');
 
     return res.status(200).json(configs);
   } catch (error) {
