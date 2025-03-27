@@ -95,7 +95,6 @@ export const getUsersByOrg = async (req, res) => {
         'users.last_name',
         'users.username',
         'users.email',
-        'users.password',
         'users.cpf',
         'user_is_orgs.role'
       );

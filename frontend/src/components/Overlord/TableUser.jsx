@@ -3,33 +3,56 @@ import { useUser } from '../../hooks/useUser';
 import Button from '../UI/Button';
 
 const TableUser = ({ users, setMessage, fetchUsers, handleEditUser }) => {
-  const { deleteUser } = useUser();
+  const { deleteUser, updateUser } = useUser();
   const [selectedUser, setSelectedUser] = useState(null);
   const [showChangePassword, setShowChangePassword] = useState(false);
-  const { updateUser } = useUser();
+  const [search, setSearch] = useState('');
+
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+  };
 
   return (
     <div className="overflow-x-auto mb-4 dark:bg-gray-800 rounded shadow-md p-2 dark:text-white bg-white text-gray-900">
-      <table className="rounded-lg w-full">
+      <input
+        type="text"
+        placeholder="Buscar usuário"
+        value={search}
+        onChange={handleSearch}
+        className="p-2 border rounded-lg w-full dark:bg-gray-700 dark:text-white"
+      />
+      <table className="rounded-lg w-full mt-4">
         <thead className="bg-gray-200 dark:bg-gray-700">
           <tr>
-            <th className="p-3 text-left">Nome</th>
+            <th className="p-3 text-left">Nome Completo</th>
             <th className="p-3 text-left">E-mail</th>
+            <th className="p-3 text-left">Username</th>
             <th className="p-3 text-left">Papel</th>
             <th className="p-3 text-right">Ações</th>
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
-            <tr key={user.id} className="transition duration-150">
-              <td className="p-3">{user.name}</td>
+          {filteredUsers.map((user, index) => (
+            <tr
+              key={user.id}
+              className={`transition duration-150 ${
+                index % 2 === 0 ? '' : 'bg-gray-300 dark:bg-gray-700'
+              }`}
+            >
+              <td className="p-3">
+                {user.name} {user.last_name}
+              </td>
               <td className="p-3">{user.email}</td>
+              <td className="p-3">{user.username}</td>
               <td className="p-3">{user.role}</td>
               <td className="p-3 flex gap-2 justify-end">
                 <Button
                   onClick={() => {
                     setSelectedUser(user);
-                    console.log(user);
                     setShowChangePassword(true);
                   }}
                   variant="secondary"
