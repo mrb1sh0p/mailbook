@@ -116,7 +116,10 @@ const NewUserForms = ({
     try {
       const data = await selectUserByCpf(cpfValue);
       if (data) {
-        setUser(data);
+        setUser({
+          ...data,
+          password: '',
+        });
         setNewUser(false);
       } else {
         setNewUser(true);

@@ -24,7 +24,7 @@ const InputFormsUsers = ({ value, user, type, setValue, label, name }) => {
         type={inputType}
         value={value}
         onChange={handleUserChange}
-        className="w-full p-2 border rounded-lg"
+        className="w-full p-2 border rounded-lg bg-gray-300"
         {...(type !== 'password' && { required: true })}
       />
       {type === 'password' && (
