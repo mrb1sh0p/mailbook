@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useUser } from '../../hooks/useUser';
+import Button from '../UI/Button';
 
-const TableUser = ({ users, setMessage, fetchUsers, selectedOrgId }) => {
+const TableUser = ({ users, setMessage, fetchUsers, handleEditUser }) => {
   const { deleteUser } = useUser();
   const [selectedUser, setSelectedUser] = useState(null);
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -25,17 +26,25 @@ const TableUser = ({ users, setMessage, fetchUsers, selectedOrgId }) => {
               <td className="p-3">{user.email}</td>
               <td className="p-3">{user.role}</td>
               <td className="p-3 flex gap-2 justify-end">
-                <button
+                <Button
                   onClick={() => {
                     setSelectedUser(user);
                     console.log(user);
                     setShowChangePassword(true);
                   }}
-                  className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition dark:bg-yellow-600"
+                  variant="secondary"
+                  className="min-w-[100px]"
                 >
                   Alterar Senha
-                </button>
-                <button
+                </Button>
+                <Button
+                  onClick={() => handleEditUser(user)}
+                  variant="edit"
+                  className="min-w-[100px]"
+                >
+                  Editar
+                </Button>
+                <Button
                   onClick={async () => {
                     await deleteUser(user.id);
                     setMessage({
@@ -44,10 +53,11 @@ const TableUser = ({ users, setMessage, fetchUsers, selectedOrgId }) => {
                     });
                     await fetchUsers();
                   }}
-                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition dark:bg-red-600"
+                  variant="danger"
+                  className="min-w-[100px]"
                 >
                   Remover
-                </button>
+                </Button>
               </td>
             </tr>
           ))}

@@ -9,18 +9,11 @@ const NewUserForms = ({
   setShowAddUser,
   selectedOrgId,
   fetchUsers,
+  user,
+  handleCancelAddUser,
+  setUser,
 }) => {
   const [newUser, setNewUser] = useState(false);
-  const [user, setUser] = useState({
-    id: '',
-    name: '',
-    last_name: '',
-    username: '',
-    email: '',
-    password: '',
-    cpf: '',
-    role: '' || 'user',
-  });
 
   const { addUserToOrg, updateRoleUserInOrg, getUsersByOrg, loading } =
     useOverlord();
@@ -166,7 +159,7 @@ const NewUserForms = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-gray-100 p-4 rounded-lg shadow-sm mb-4"
+      className="bg-gray-100 p-4 rounded-lg shadow-sm mb-4 dark:bg-gray-700 dark:text-white"
     >
       <h3 className="text-lg font-bold mb-4">
         {newUser ? 'Adicionar Usuário' : 'Atualizar Usuário'}
@@ -179,7 +172,7 @@ const NewUserForms = ({
             type="text"
             value={user.cpf}
             onChange={handleCpfChange}
-            className="w-full p-2 border rounded-lg"
+            className="w-full p-2 border rounded-lg dark:bg-gray-800 dark:text-white"
             required
           />
         </div>
@@ -233,15 +226,20 @@ const NewUserForms = ({
         <select
           value={user.role}
           onChange={(e) => setUser({ ...user, role: e.target.value })}
-          className="w-full p-2 border rounded-lg"
+          className="w-full p-2 border rounded-lg dark:bg-gray-800 dark:text-white"
         >
           <option value="user">Usuário</option>
           <option value="admin">Administrador</option>
         </select>
       </div>
-      <Button type="submit" variant="primary" loading={loading || load}>
-        {newUser ? 'Adicionar Usuário' : 'Atualizar Usuário'}
-      </Button>
+      <div className="flex justify-start gap-4">
+        <Button type="submit" variant="save" loading={loading || load}>
+          {newUser ? 'Adicionar' : 'Atualizar'}
+        </Button>
+        <Button variant="cancel" onClick={handleCancelAddUser}>
+          Cancelar
+        </Button>
+      </div>
     </form>
   );
 };
