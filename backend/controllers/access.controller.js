@@ -98,6 +98,7 @@ export const getUserData = async (req, res) => {
         'u.email',
         'uo.role',
         'o.name as org_name',
+        'o.id as org_id',
         'u.email',
         'u.id',
         'u.name'

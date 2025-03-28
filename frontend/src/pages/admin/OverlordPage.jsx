@@ -16,7 +16,8 @@ import {
 } from 'react-icons/fa';
 
 const OverlordPage = () => {
-  const { error, loading } = useOverlord();
+  const { error, setLoading, loading, orgs, smtpList, saveSMTP, updateSMTP } =
+    useOverlord();
   const { logout } = useAuth();
   const [activeMenu, setActiveMenu] = useState('orgs');
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -30,7 +31,16 @@ const OverlordPage = () => {
       case 'orgs':
         return <OrganizationsManager />;
       case 'smtp':
-        return <SMTPConfigPanel />;
+        return (
+          <SMTPConfigPanel
+            orgs={orgs}
+            smtpList={smtpList}
+            saveSMTP={saveSMTP}
+            updateSMTP={updateSMTP}
+            loading={loading}
+            setLoading={setLoading}
+          />
+        );
       case 'users':
         return <UsersManager />;
       default:

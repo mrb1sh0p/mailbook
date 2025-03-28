@@ -22,6 +22,20 @@ export const useUser = () => {
     }
   };
 
+  const userByOrgs = async (userId) => {
+    try {
+      setLoading(true);
+      const { data } = await axios.get(`/api/v1/user/orgs/${userId}`);
+      console.log('Orgs:', data);
+      return data;
+    } catch (error) {
+      console.error('Erro ao buscar usuários por organização:', error);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const selectUserByCpf = async (cpf) => {
     try {
       setLoading(true);
@@ -74,6 +88,7 @@ export const useUser = () => {
     updateUser,
     createUser,
     selectUserByCpf,
+    userByOrgs,
     loading,
   };
 };

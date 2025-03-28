@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import EmailComposer from './components/EmailForm/EmailComposer';
+import SMTPConfigPanel from './components/SMTPConfig/SMTPConfigPanel';
 import FeedbackMessage from './components/UI/FeedbackMessage';
 import DarkModeToggle from './components/DarkModeToggle';
 import { useEmail } from './hooks/useEmail';
+import { useSMTP } from './hooks/useSMTP';
 import { useUser } from './hooks/useUser';
 import { useAuth } from './contexts/AuthContext';
 import {
@@ -10,18 +12,30 @@ import {
   FaSignOutAlt,
   FaChevronLeft,
   FaChevronRight,
+  FaCogs,
 } from 'react-icons/fa';
 
 const App = () => {
   const { getDataUser, loading } = useUser();
   const { logout, selectedSmtp } = useAuth();
   const [user, setUser] = useState(null);
+  const [orgs, setOrgs] = useState([]);
   const [activeMenu, setActiveMenu] = useState('email');
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
   };
+
+  const {
+    smtpList,
+    error: smtpError,
+    setLoading,
+    saveSMTP,
+    updateSMTP,
+  } = useSMTP();
+
+  const { userByOrgs } = useUser();
 
   const {
     emailData,
@@ -49,6 +63,22 @@ const App = () => {
     }
   }, [getDataUser, user]);
 
+  useEffect(() => {
+    const fetchOrgs = async () => {
+      try {
+        const orgsData = await userByOrgs(user?.id);
+        if (orgsData) {
+          setOrgs(orgsData);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar organizações:', error);
+      }
+    };
+    if (user) {
+      fetchOrgs();
+    }
+  }, [user, userByOrgs]);
+
   const handleSend = async () => {
     console.log('selectedSmtp:', selectedSmtp);
     if (!selectedSmtp) {
@@ -68,10 +98,21 @@ const App = () => {
     }
   };
 
-  const combinedError = emailError;
+  const combinedError = emailError || smtpError;
 
   const renderContent = () => {
     switch (activeMenu) {
+      case 'smtp':
+        return (
+          <SMTPConfigPanel
+            orgs={orgs}
+            smtpList={smtpList}
+            saveSMTP={saveSMTP}
+            updateSMTP={updateSMTP}
+            loading={loading}
+            setLoading={setLoading}
+          />
+        );
       case 'email':
         return (
           <EmailComposer
@@ -108,6 +149,19 @@ const App = () => {
         <div>
           {sidebarOpen && <h2 className="text-xl font-bold mb-4">Menu</h2>}
           <ul className="space-y-2">
+            <li>
+              <button
+                onClick={() => setActiveMenu('smtp')}
+                className={`w-full flex items-center gap-2 p-2 rounded dark:text-white ${
+                  activeMenu === 'smtp'
+                    ? 'bg-blue-500 text-white'
+                    : 'hover:bg-gray-100 text-gray-900 dark:hover:bg-gray-600'
+                }`}
+              >
+                <FaCogs />
+                {sidebarOpen && 'SMTP Config'}
+              </button>
+            </li>
             <li>
               <button
                 onClick={() => setActiveMenu('email')}

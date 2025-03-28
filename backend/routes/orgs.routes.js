@@ -10,6 +10,7 @@ import {
   updateRoleUserInOrg,
   getOrgsByUser,
   getUsersByOrg,
+  verifyIsOrgAdmin,
 } from '../controllers/org.controller.js';
 
 import { requireOrgAdmin, requireSuperAdmin } from '../middlewares/auth.js';
@@ -25,6 +26,7 @@ router.put('/orgs/:id', requireSuperAdmin, updateOrg);
 router.delete('/orgs/:id', requireSuperAdmin, deleteOrg);
 router.put('/orgs/:id/users/:userId', requireSuperAdmin, updateRoleUserInOrg);
 
+router.get('/orgs/:id/verify', verifyIsOrgAdmin);
 router.get('/org', getOrgsByUser);
 router.put('/org/users/:userId', requireOrgAdmin, updateRoleUserInOrg);
 router.get('/org/:id/users', requireOrgAdmin, getUsersByOrg);

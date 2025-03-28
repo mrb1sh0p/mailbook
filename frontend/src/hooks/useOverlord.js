@@ -209,6 +209,7 @@ export const useOverlord = () => {
     error,
     selectedOrg,
     smtpList,
+    setLoading,
     updateSMTP,
     saveSMTP,
     getUsersByOrg,

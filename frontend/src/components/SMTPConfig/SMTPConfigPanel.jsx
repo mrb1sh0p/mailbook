@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useOverlord } from '../../hooks/useOverlord';
 import SMTPConfigSelector from './SMTPConfigSelector';
 import SMTPConfigForm from './SMTPConfigForm';
 
-const SMTPConfigPanel = () => {
-  const { orgs, smtpList, saveSMTP, updateSMTP } = useOverlord();
+const SMTPConfigPanel = ({
+  orgs, smtpList, saveSMTP, updateSMTP, loading, setLoading
+}) => {
   const [selectedOrgId, setSelectedOrgId] = useState('');
   const [smtps, setSmtps] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [selectedConfig, setSelectedConfig] = useState(null);
 
   useEffect(() => {

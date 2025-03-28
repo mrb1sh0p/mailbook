@@ -183,3 +183,26 @@ export const deleteOrg = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+export const verifyIsOrgAdmin = async (req, res, next) => {
+  const { id: orgId } = req.params;
+  const { userId } = req.user;
+
+  try {
+    const userOrg = await db('user_is_orgs')
+      .where({ user_id: userId, org_id: orgId })
+      .first();
+
+    if (!userOrg) {
+      return res.status(403).json({ error: 'Acesso negado' });
+    }
+
+    if (userOrg.role !== 'admin') {
+      return res.status(403).json({ error: 'Acesso negado' });
+    }
+
+    next();
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};

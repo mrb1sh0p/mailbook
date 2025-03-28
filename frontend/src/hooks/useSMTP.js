@@ -107,6 +107,7 @@ export const useSMTP = () => {
     selectedSmtp,
     loading,
     error,
+    setLoading,
     selectSMTP,
     saveSMTP,
     updateSMTP,
