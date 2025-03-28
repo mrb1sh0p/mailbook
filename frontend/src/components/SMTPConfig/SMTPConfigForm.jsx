@@ -54,6 +54,8 @@ const SMTPConfigForm = ({
       orgId: org_id,
     };
     config.id ? onUpdate(newConfig) : onSave(newConfig);
+
+    setConfig(defaultConfig);
   };
 
   return (
