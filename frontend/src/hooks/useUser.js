@@ -26,7 +26,6 @@ export const useUser = () => {
     try {
       setLoading(true);
       const { data } = await axios.get(`/api/v1/user/orgs/${userId}`);
-      console.log('Orgs:', data);
       return data;
     } catch (error) {
       console.error('Erro ao buscar usuários por organização:', error);

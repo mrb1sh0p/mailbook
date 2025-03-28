@@ -3,7 +3,12 @@ import SMTPConfigSelector from './SMTPConfigSelector';
 import SMTPConfigForm from './SMTPConfigForm';
 
 const SMTPConfigPanel = ({
-  orgs, smtpList, saveSMTP, updateSMTP, loading, setLoading
+  orgs,
+  smtpList,
+  saveSMTP,
+  updateSMTP,
+  loading,
+  setLoading,
 }) => {
   const [selectedOrgId, setSelectedOrgId] = useState('');
   const [smtps, setSmtps] = useState([]);
@@ -20,7 +25,6 @@ const SMTPConfigPanel = ({
     setLoading(true);
     try {
       const orgSmtps = smtpList.filter((smtp) => smtp.org_id === orgId);
-      console.log(orgSmtps);
       setSmtps(orgSmtps || []);
     } catch (error) {
       console.error('Erro ao carregar SMTPs', error);

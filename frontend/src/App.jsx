@@ -54,30 +54,25 @@ const App = () => {
       const fetchUser = async () => {
         try {
           const data = await getDataUser();
-          if (data) setUser(data);
+          if (!data) {
+            alert('Usuário não encontrado. Faça login novamente.');
+            return;
+          }
+          setUser(data);
+
+          const orgsData = await userByOrgs(data.id);
+          if (!orgsData) {
+            alert('Organizações não encontradas.');
+            return;
+          }
+          setOrgs(orgsData);
         } catch (error) {
           console.error('Erro ao buscar usuário:', error);
         }
       };
       fetchUser();
     }
-  }, [getDataUser, user]);
-
-  useEffect(() => {
-    const fetchOrgs = async () => {
-      try {
-        const orgsData = await userByOrgs(user?.id);
-        if (orgsData) {
-          setOrgs(orgsData);
-        }
-      } catch (error) {
-        console.error('Erro ao buscar organizações:', error);
-      }
-    };
-    if (user) {
-      fetchOrgs();
-    }
-  }, [user, userByOrgs]);
+  }, [getDataUser, user, userByOrgs]);
 
   const handleSend = async () => {
     console.log('selectedSmtp:', selectedSmtp);
@@ -149,19 +144,21 @@ const App = () => {
         <div>
           {sidebarOpen && <h2 className="text-xl font-bold mb-4">Menu</h2>}
           <ul className="space-y-2">
-            <li>
-              <button
-                onClick={() => setActiveMenu('smtp')}
-                className={`w-full flex items-center gap-2 p-2 rounded dark:text-white ${
-                  activeMenu === 'smtp'
-                    ? 'bg-blue-500 text-white'
-                    : 'hover:bg-gray-100 text-gray-900 dark:hover:bg-gray-600'
-                }`}
-              >
-                <FaCogs />
-                {sidebarOpen && 'SMTP Config'}
-              </button>
-            </li>
+            {user?.role === 'admin' && (
+              <li>
+                <button
+                  onClick={() => setActiveMenu('smtp')}
+                  className={`w-full flex items-center gap-2 p-2 rounded dark:text-white ${
+                    activeMenu === 'smtp'
+                      ? 'bg-blue-500 text-white'
+                      : 'hover:bg-gray-100 text-gray-900 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  <FaCogs />
+                  {sidebarOpen && 'SMTP Config'}
+                </button>
+              </li>
+            )}
             <li>
               <button
                 onClick={() => setActiveMenu('email')}
