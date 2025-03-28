@@ -6,7 +6,6 @@ const db = knex(dbconfig);
 export const addUserToOrg = async (req, res) => {
   const { id, userId } = req.params;
 
-  // Validação
   if (!userId || !id) {
     return res.status(400).json({ error: 'Parâmetros inválidos' });
   }
@@ -130,24 +129,25 @@ export const getOrgById = async (req, res) => {
 };
 
 export const createOrg = async (req, res) => {
-  const { name, address, phone, email, cnpj } = req.body;
-
   try {
+    const { name, address, phone, email, cnpj } = req.body;
+
+    for (const field of ['name', 'address', 'phone', 'email', 'cnpj']) {
+      if (!req.body[field]) {
+        return res.status(400).json({ error: `${field} é obrigatório` });
+      }
+    }
+
     const [newOrg] = await db('orgs')
-      .insert({
-        name,
-        address,
-        phone,
-        email,
-        cnpj,
-      })
+      .insert({ name, address, phone, email, cnpj })
       .returning('*');
+
     return res.status(201).json(newOrg);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    console.error('Erro ao criar organização:', error);
+    return res.status(500).json({ error: 'Erro interno no servidor' });
   }
 };
-
 export const updateOrg = async (req, res) => {
   const { id } = req.params;
   const { name } = req.body;

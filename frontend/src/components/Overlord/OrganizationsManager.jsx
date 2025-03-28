@@ -26,7 +26,6 @@ const OrganizationsManager = () => {
       await createOrg(orgData);
     }
     setShowForm(false);
-    // Atualiza a lista se necessário
     fetchOrgs();
   };
 

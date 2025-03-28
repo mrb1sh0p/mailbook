@@ -45,7 +45,7 @@ const OrganizationForm = ({ initialOrg, onSubmit, onCancel, loading }) => {
         <Input
           label={'CNPJ:'}
           type="text"
-          name="cpnj"
+          name="cnpj"
           value={org.cnpj}
           onChange={handleChange}
         />
