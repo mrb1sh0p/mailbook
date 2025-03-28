@@ -3,7 +3,7 @@ import {
   convertTextToHTML,
   convertHTMLToText,
 } from '../../utils/convertTextToHTML.js';
-import useModels from '../../hooks/useModel.js';
+import { useModel } from '../../hooks/useModel.js';
 import ModelSelector from '../ModelForm/ModelSelector.jsx';
 
 const HTMLEditor = ({ value, onChange }) => {
@@ -11,7 +11,7 @@ const HTMLEditor = ({ value, onChange }) => {
   const [preview, setPreview] = useState(false);
   const [title, setTitle] = useState('');
   const { modelList, selectedModel, selectModel, updateModel, saveModel } =
-    useModels();
+    useModel();
 
   const textareaRef = useRef(null);
 

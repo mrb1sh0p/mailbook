@@ -28,11 +28,12 @@ const App = () => {
   };
 
   const {
-    smtpList,
     error: smtpError,
+    smtpList,
     setLoading,
     saveSMTP,
     updateSMTP,
+    fetchSMTP,
   } = useSMTP();
 
   const { userByOrgs } = useUser();
@@ -66,13 +67,15 @@ const App = () => {
             return;
           }
           setOrgs(orgsData);
+
+          if (user?.role === 'admin') fetchSMTP();
         } catch (error) {
           console.error('Erro ao buscar usuário:', error);
         }
       };
       fetchUser();
     }
-  }, [getDataUser, user, userByOrgs]);
+  }, [fetchSMTP, getDataUser, user, userByOrgs]);
 
   const handleSend = async () => {
     console.log('selectedSmtp:', selectedSmtp);

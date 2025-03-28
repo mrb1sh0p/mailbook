@@ -16,9 +16,7 @@ import verifyToken from '../middlewares/verify.js';
 const router = express.Router();
 
 router.use(verifyToken);
-
 router.post('/upload', uploadFile);
-
 router.post('/send', sendEmails);
 
 router.post('/model', createEmailModel);

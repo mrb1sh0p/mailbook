@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useUser } from './useUser';
 import axios from 'axios';
 
 export const useSMTP = () => {
@@ -97,10 +98,6 @@ export const useSMTP = () => {
     const config = smtpList.find((c) => c.id.toString() === id.toString());
     setSelectedSmtp(config || null);
   };
-
-  useEffect(() => {
-    fetchSMTP();
-  }, [fetchSMTP]);
 
   return {
     smtpList,

@@ -96,5 +96,3 @@ export const useModel = () => {
     setNewModel,
   };
 };
-
-export default useModel;
