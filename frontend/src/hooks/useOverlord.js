@@ -123,6 +123,7 @@ export const useOverlord = () => {
   const updateRoleUserInOrg = async (orgId, userId, role) => {
     try {
       setLoading(true);
+
       const { data } = await axios.put(
         `/api/v1/orgs/${orgId}/users/${userId}`,
         {

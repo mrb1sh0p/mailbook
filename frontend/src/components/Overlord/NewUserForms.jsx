@@ -70,6 +70,7 @@ const NewUserForms = ({
     } else {
       try {
         await updateUser(user);
+        await updateRoleUserInOrg(selectedOrgId, user.id, user.role);
         setMessage({
           message: 'Usuário atualizado com sucesso',
           type: 'success',
@@ -79,7 +80,6 @@ const NewUserForms = ({
 
         if (!userInOrg.find((u) => u.id === user.id)) {
           await addUserToOrg(selectedOrgId, user.id);
-          await updateRoleUserInOrg(user.id, selectedOrgId, user.role);
         }
 
         await fetchUsers(selectedOrgId);

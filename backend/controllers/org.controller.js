@@ -20,17 +20,16 @@ export const addUserToOrg = async (req, res) => {
 };
 
 export const updateRoleUserInOrg = async (req, res) => {
-  const { id, orgId } = req.params;
-  const { role } = req.body;
-
-  // Validação
-  if (!role || !id || !orgId) {
-    return res.status(400).json({ error: 'Parâmetros inválidos' });
-  }
-
   try {
+    const { id, userId } = req.params;
+    const { role } = req.body;
+
+    if (!role) {
+      return res.status(400).json({ error: 'Preencha o campo role' });
+    }
+
     const updatedUser = await db('user_is_orgs')
-      .where({ user_id: id, org_id: orgId })
+      .where({ user_id: userId, org_id: id })
       .update({ role })
       .returning('*');
 
