@@ -5,6 +5,7 @@ import emailRoutes from './routes/email.routes.js';
 import orgsRoutes from './routes/orgs.routes.js';
 import userRoutes from './routes/user.routes.js';
 import smtpRoutes from './routes/smtp.routes.js';
+import authRoutes from './routes/auth.routes.js';
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 const apiVersion = '/api/v1';
+app.use(apiVersion, authRoutes);
 app.use(apiVersion, emailRoutes);
 app.use(apiVersion, smtpRoutes);
 app.use(apiVersion, userRoutes);

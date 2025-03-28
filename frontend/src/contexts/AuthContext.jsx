@@ -57,7 +57,7 @@ export function AuthProvider({ children }) {
     try {
       const { username, password } = credentials;
 
-      const { data } = await axios.post('/api/v1/login/overlord', {
+      const { data } = await axios.post('/api/v1/login-overlord', {
         username,
         password,
       });
